@@ -12,13 +12,13 @@
     - [x] `detailCommon2` 공통 정보 조회
     - [x] `detailIntro2` 소개 정보 조회
     - [x] `detailImage2` 이미지 목록 조회
-  - [ ] `supabase-api.ts` Supabase 쿼리 함수들 (북마크)
-    - [ ] 북마크 추가/삭제
-    - [ ] 북마크 목록 조회
-    - [ ] 북마크 여부 확인
-- [ ] `components/ui/` 디렉토리
+    - [x] `supabase-api.ts` Supabase 쿼리 함수들 (북마크)
+    - [x] 북마크 추가/삭제
+    - [x] 북마크 목록 조회
+    - [x] 북마크 여부 확인
+- [x] `components/ui/` 디렉토리
   - [x] 기본 shadcn/ui 컴포넌트 (button, dialog, form, input, label, textarea, accordion)
-  - [ ] 공통 컴포넌트 (로딩 스피너, 에러 메시지, 스켈레톤 UI)
+  - [x] 공통 컴포넌트 (로딩 스피너, 에러 메시지, 스켈레톤 UI)
 - [ ] `app/` 디렉토리
   - [x] `layout.tsx` 레이아웃 구조 (헤더 포함, Navbar 통합)
 - [ ] 환경변수 설정
