@@ -409,3 +409,4 @@ saas-template/
 - [shadcn/ui 문서](https://ui.shadcn.com/)
 - [Tailwind CSS v4 문서](https://tailwindcss.com/docs)
 # my-trip
+# my-trip
