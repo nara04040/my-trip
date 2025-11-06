@@ -20,7 +20,6 @@
  */
 
 import Image from "next/image";
-import Link from "next/link";
 import { MapPin, Phone, Globe, FileText } from "lucide-react";
 import type { TourDetail } from "@/lib/types/tour";
 import { CONTENT_TYPE_NAMES } from "@/lib/types/tour";

@@ -19,7 +19,7 @@
 
 "use client";
 
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
 import { ChevronLeft, ChevronRight, X, ImageIcon } from "lucide-react";
 import type { TourImage } from "@/lib/types/tour";
@@ -49,6 +49,20 @@ export function DetailGallery({ images, title }: DetailGalleryProps) {
   const [selectedIndex, setSelectedIndex] = useState<number | null>(null);
   const [isOpen, setIsOpen] = useState(false);
 
+  const handlePrevious = useCallback(() => {
+    if (selectedIndex === null) return;
+    const newIndex =
+      selectedIndex === 0 ? images.length - 1 : selectedIndex - 1;
+    setSelectedIndex(newIndex);
+  }, [selectedIndex, images.length]);
+
+  const handleNext = useCallback(() => {
+    if (selectedIndex === null) return;
+    const newIndex =
+      selectedIndex === images.length - 1 ? 0 : selectedIndex + 1;
+    setSelectedIndex(newIndex);
+  }, [selectedIndex, images.length]);
+
   // 키보드 네비게이션 (화살표 키)
   useEffect(() => {
     if (!isOpen) return;
@@ -67,7 +81,7 @@ export function DetailGallery({ images, title }: DetailGalleryProps) {
 
     window.addEventListener("keydown", handleKeyDown);
     return () => window.removeEventListener("keydown", handleKeyDown);
-  }, [isOpen, selectedIndex]);
+  }, [isOpen, selectedIndex, handlePrevious, handleNext]);
 
   const handleImageClick = (index: number) => {
     setSelectedIndex(index);
@@ -77,20 +91,6 @@ export function DetailGallery({ images, title }: DetailGalleryProps) {
   const handleClose = () => {
     setIsOpen(false);
     setSelectedIndex(null);
-  };
-
-  const handlePrevious = () => {
-    if (selectedIndex === null) return;
-    const newIndex =
-      selectedIndex === 0 ? images.length - 1 : selectedIndex - 1;
-    setSelectedIndex(newIndex);
-  };
-
-  const handleNext = () => {
-    if (selectedIndex === null) return;
-    const newIndex =
-      selectedIndex === images.length - 1 ? 0 : selectedIndex + 1;
-    setSelectedIndex(newIndex);
   };
 
   // 이미지가 없으면 기본 이미지 표시

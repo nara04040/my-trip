@@ -14,7 +14,7 @@
 
 import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
-import React from "react";
+import React, { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { TourSearch } from "@/components/tour-search";
 
@@ -29,7 +29,9 @@ const Navbar = () => {
 
         {/* 검색창 (데스크톱) */}
         <div className="hidden md:flex flex-1 max-w-md mx-4">
-          <TourSearch className="w-full" />
+          <Suspense fallback={<div className="w-full h-10 animate-pulse bg-muted rounded-md" />}>
+            <TourSearch className="w-full" />
+          </Suspense>
         </div>
 
         {/* 로그인/회원가입 */}
@@ -49,7 +51,9 @@ const Navbar = () => {
 
       {/* 검색창 (모바일) */}
       <div className="md:hidden border-t px-4 py-2">
-        <TourSearch className="w-full" />
+        <Suspense fallback={<div className="w-full h-10 animate-pulse bg-muted rounded-md" />}>
+          <TourSearch className="w-full" />
+        </Suspense>
       </div>
     </header>
   );

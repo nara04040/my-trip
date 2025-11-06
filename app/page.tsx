@@ -13,6 +13,7 @@
  * @see {@link /docs/TODO.md} - 작업 목록
  */
 
+import { Suspense } from "react";
 import { TourList } from "@/components/tour-list";
 import { TourFilters } from "@/components/tour-filters";
 import { TourPagination } from "@/components/tour-pagination";
@@ -137,7 +138,9 @@ export default async function Home({ searchParams }: HomeProps) {
 
       {/* 필터 컴포넌트 */}
       <div className="mb-6">
-        <TourFilters areaCodes={areaCodes} />
+        <Suspense fallback={<div className="h-10 animate-pulse bg-muted rounded-lg" />}>
+          <TourFilters areaCodes={areaCodes} />
+        </Suspense>
       </div>
 
       {/* 관광지 목록 컴포넌트 */}
@@ -145,12 +148,14 @@ export default async function Home({ searchParams }: HomeProps) {
 
       {/* 페이지네이션 컴포넌트 */}
       {!error && tours.length > 0 && (
-        <TourPagination
-          currentPage={pageNo}
-          totalPages={totalPages}
-          itemsPerPage={itemsPerPage}
-          totalItems={totalCount}
-        />
+        <Suspense fallback={<div className="h-16 animate-pulse bg-muted rounded-lg mt-6" />}>
+          <TourPagination
+            currentPage={pageNo}
+            totalPages={totalPages}
+            itemsPerPage={itemsPerPage}
+            totalItems={totalCount}
+          />
+        </Suspense>
       )}
     </main>
   );

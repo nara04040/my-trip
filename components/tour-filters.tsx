@@ -196,7 +196,7 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
           </SelectTrigger>
           <SelectContent>
             <SelectItem value="all">전체</SelectItem>
-            {Object.entries(CONTENT_TYPE).map(([key, value]) => (
+            {Object.values(CONTENT_TYPE).map((value) => (
               <SelectItem key={value} value={value}>
                 {CONTENT_TYPE_NAMES[value as ContentTypeId]}
               </SelectItem>
