@@ -103,16 +103,16 @@
   - [x] 섹션별 구분선 또는 카드
 
 ### 3.2 기본 정보 섹션 (MVP 2.4.1)
-- [ ] `components/tour-detail/detail-info.tsx` 기본 정보 컴포넌트
-  - [ ] `detailCommon2` API 연동
-  - [ ] 관광지명 (대제목)
-  - [ ] 대표 이미지 (크게 표시)
-  - [ ] 주소 (복사 기능)
-  - [ ] 전화번호 (클릭 시 전화 연결)
-  - [ ] 홈페이지 (링크)
-  - [ ] 개요 (긴 설명문)
-  - [ ] 관광 타입 및 카테고리
-  - [ ] 정보 없는 항목은 숨김 처리
+- [x] `components/tour-detail/detail-info.tsx` 기본 정보 컴포넌트
+  - [x] `detailCommon2` API 연동
+  - [x] 관광지명 (대제목)
+  - [x] 대표 이미지 (크게 표시)
+  - [x] 주소 (복사 기능)
+  - [x] 전화번호 (클릭 시 전화 연결)
+  - [x] 홈페이지 (링크, HTML 태그 처리 포함)
+  - [x] 개요 (긴 설명문, HTML 태그 제거)
+  - [x] 관광 타입 및 카테고리
+  - [x] 정보 없는 항목은 숨김 처리
 
 ### 3.3 지도 섹션 (MVP 2.4.4) - ⏰ 내일 구현 예정
 - [ ] `components/tour-detail/detail-map.tsx` 지도 컴포넌트
@@ -121,27 +121,28 @@
   - [ ] 좌표 정보 표시 (선택 사항)
 
 ### 3.4 공유 기능 (MVP 2.4.5)
-- [ ] `components/tour-detail/share-button.tsx` 공유 버튼 컴포넌트
-  - [ ] URL 복사 기능 (클립보드 API)
-  - [ ] 복사 완료 토스트 메시지
-  - [ ] 공유 아이콘 버튼 (Share/Link 아이콘)
-- [ ] Open Graph 메타태그 동적 생성
-  - [ ] `og:title` 관광지명
-  - [ ] `og:description` 관광지 설명 (100자 이내)
-  - [ ] `og:image` 대표 이미지 (1200x630 권장)
-  - [ ] `og:url` 상세페이지 URL
-  - [ ] `og:type` "website"
+- [x] `components/tour-detail/share-button.tsx` 공유 버튼 컴포넌트
+  - [x] URL 복사 기능 (클립보드 API)
+  - [x] 복사 완료 토스트 메시지
+  - [x] 공유 아이콘 버튼 (Share2 아이콘)
+- [x] Open Graph 메타태그 동적 생성
+  - [x] `og:title` 관광지명
+  - [x] `og:description` 관광지 설명 (100자 이내)
+  - [x] `og:image` 대표 이미지 (1200x630 권장)
+  - [x] `og:url` 상세페이지 URL
+  - [x] `og:type` "website"
 
-### 3.5 추가 정보 섹션 (향후 구현)
-- [ ] `components/tour-detail/detail-intro.tsx` 운영 정보 컴포넌트
-  - [ ] `detailIntro2` API 연동
-  - [ ] 운영시간 / 개장시간
-  - [ ] 휴무일
-  - [ ] 이용요금
-  - [ ] 주차 가능 여부
-  - [ ] 수용인원
-  - [ ] 체험 프로그램 (있는 경우)
-  - [ ] 유모차/반려동물 동반 가능 여부
+### 3.5 추가 정보 섹션
+- [x] `components/tour-detail/detail-intro.tsx` 운영 정보 컴포넌트
+  - [x] `detailIntro2` API 연동
+  - [x] 운영시간 / 개장시간
+  - [x] 휴무일
+  - [x] 이용요금
+  - [x] 주차 가능 여부
+  - [x] 수용인원
+  - [x] 체험 프로그램 (있는 경우)
+  - [x] 유모차/반려동물 동반 가능 여부
+  - [x] HTML 태그 제거 기능 (br 태그는 줄바꿈으로 변환)
 - [ ] `components/tour-detail/detail-gallery.tsx` 이미지 갤러리 컴포넌트
   - [ ] `detailImage2` API 연동
   - [ ] 대표 이미지 + 서브 이미지들
