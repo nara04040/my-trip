@@ -35,6 +35,12 @@ const BASE_URL = "https://apis.data.go.kr/B551011/KorService2";
 /**
  * API 키 가져오기 (환경변수)
  * NEXT_PUBLIC_TOUR_API_KEY 또는 TOUR_API_KEY 사용
+ * 
+ * 한국관광공사 API는 serviceKey를 URL 인코딩된 형태로 받습니다.
+ * 환경변수에 이미 URL 인코딩된 값(%2F, %3D 등)이 들어있을 수 있으므로,
+ * 디코딩한 후 URLSearchParams에서 자동으로 다시 올바르게 인코딩되도록 처리합니다.
+ * 
+ * 이렇게 하면 이중 인코딩 문제를 방지할 수 있습니다.
  */
 function getApiKey(): string {
   const apiKey =
@@ -46,7 +52,14 @@ function getApiKey(): string {
     );
   }
 
-  return apiKey;
+  // 환경변수에 URL 인코딩된 값이 들어있을 수 있으므로 디코딩
+  // URLSearchParams가 자동으로 다시 올바르게 인코딩해줍니다
+  try {
+    return decodeURIComponent(apiKey);
+  } catch {
+    // 디코딩 실패 시 원본 값 반환 (이미 디코딩된 상태일 수 있음)
+    return apiKey;
+  }
 }
 
 /**

@@ -1,41 +1,55 @@
-import Link from "next/link";
-import { Button } from "@/components/ui/button";
-import { RiSupabaseFill } from "react-icons/ri";
+/**
+ * @file page.tsx
+ * @description 홈페이지 (관광지 목록)
+ *
+ * 관광지 목록을 표시하는 홈페이지입니다.
+ * Server Component에서 한국관광공사 API를 호출하여 실제 데이터를 가져옵니다.
+ *
+ * 현재는 기본값으로 서울 지역(areaCode: "1")의 전체 관광지를 조회합니다.
+ * 추후 필터 기능 추가 시 지역 및 관광 타입 선택 가능 예정.
+ *
+ * @see {@link /docs/PRD.md} - 프로젝트 요구사항 문서
+ * @see {@link /docs/TODO.md} - 작업 목록
+ */
 
-export default function Home() {
+import { TourList } from "@/components/tour-list";
+import { getAreaBasedList } from "@/lib/api/tour-api";
+
+/**
+ * 홈페이지 컴포넌트
+ *
+ * Server Component에서 한국관광공사 API를 호출하여 관광지 목록을 가져옵니다.
+ * 에러가 발생하면 에러 메시지를 표시합니다.
+ *
+ * @default areaCode: "1" (서울)
+ * @default contentTypeId: undefined (전체 관광 타입)
+ * @default numOfRows: 20
+ */
+export default async function Home() {
+  let tours;
+  let error: Error | null = null;
+
+  try {
+    // 서울 지역(areaCode: "1")의 전체 관광지 조회
+    // TODO: 추후 필터 기능 추가 시 query parameter로 받아서 사용
+    tours = await getAreaBasedList("1", undefined, 20, 1);
+  } catch (err) {
+    console.error("Failed to fetch tours:", err);
+    error = err instanceof Error ? err : new Error("관광지 정보를 불러오는데 실패했습니다.");
+    tours = [];
+  }
+
   return (
-    <main className="min-h-[calc(100vh-80px)] flex items-center px-8 py-16 lg:py-24">
-      <section className="w-full max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-2 gap-16 lg:gap-24 items-start lg:items-center">
-        {/* 좌측: 환영 메시지 */}
-        <div className="flex flex-col gap-8">
-          <h1 className="text-5xl lg:text-7xl font-bold leading-tight">
-            SaaS 앱 템플릿에 오신 것을 환영합니다
-          </h1>
-          <p className="text-xl lg:text-2xl text-gray-600 dark:text-gray-400 leading-relaxed">
-            Next.js, Shadcn, Clerk, Supabase, TailwindCSS로 구동되는 완전한
-            기능의 템플릿으로 다음 프로젝트를 시작하세요.
-          </p>
-        </div>
+    <main className="container py-8">
+      <div className="mb-8">
+        <h1 className="text-3xl font-bold mb-2">관광지 목록</h1>
+        <p className="text-muted-foreground">
+          한국의 다양한 관광지를 탐색해보세요.
+        </p>
+      </div>
 
-        {/* 우측: 버튼 두 개 세로 정렬 */}
-        <div className="flex flex-col gap-6">
-          <Link href="/storage-test" className="w-full">
-            <Button className="w-full h-28 flex items-center justify-center gap-4 text-xl shadow-lg hover:shadow-xl transition-shadow">
-              <RiSupabaseFill className="w-8 h-8" />
-              <span>Storage 파일 업로드 테스트</span>
-            </Button>
-          </Link>
-          <Link href="/auth-test" className="w-full">
-            <Button
-              className="w-full h-28 flex items-center justify-center gap-4 text-xl shadow-lg hover:shadow-xl transition-shadow"
-              variant="outline"
-            >
-              <RiSupabaseFill className="w-8 h-8" />
-              <span>Clerk + Supabase 인증 연동</span>
-            </Button>
-          </Link>
-        </div>
-      </section>
+      {/* 관광지 목록 컴포넌트 */}
+      <TourList tours={tours} error={error} />
     </main>
   );
 }

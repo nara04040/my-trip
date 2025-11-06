@@ -19,10 +19,10 @@
 - [x] `components/ui/` 디렉토리
   - [x] 기본 shadcn/ui 컴포넌트 (button, dialog, form, input, label, textarea, accordion)
   - [x] 공통 컴포넌트 (로딩 스피너, 에러 메시지, 스켈레톤 UI)
-- [ ] `app/` 디렉토리
+- [x] `app/` 디렉토리
   - [x] `layout.tsx` 레이아웃 구조 (헤더 포함, Navbar 통합)
-- [ ] 환경변수 설정
-  - [ ] `.env` 파일에 한국관광공사 API 키 설정
+- [x] 환경변수 설정
+  - [x] `.env` 파일에 한국관광공사 API 키 설정
   - [ ] `.env` 파일에 네이버 지도 클라이언트 ID 설정 (내일 구현 예정)
 
 ## Phase 2: 홈페이지 (`/`) - 관광지 목록
@@ -33,18 +33,18 @@
   - [x] 반응형 레이아웃 설정
 
 ### 2.2 관광지 목록 기능 (MVP 2.1)
-- [ ] `components/tour-card.tsx` 관광지 카드 컴포넌트
-  - [ ] 썸네일 이미지 표시 (없으면 기본 이미지)
-  - [ ] 관광지명
-  - [ ] 주소
-  - [ ] 관광 타입 뱃지
-  - [ ] 간단한 개요 (1-2줄)
-- [ ] `components/tour-list.tsx` 관광지 목록 컴포넌트
-  - [ ] 카드 형태의 그리드 레이아웃
-  - [ ] 하드코딩 데이터로 테스트
-  - [ ] API 연동하여 실제 데이터 표시
-  - [ ] 로딩 상태 (스켈레톤 UI)
-  - [ ] 에러 처리
+- [x] `components/tour-card.tsx` 관광지 카드 컴포넌트
+  - [x] 썸네일 이미지 표시 (없으면 기본 이미지)
+  - [x] 관광지명
+  - [x] 주소
+  - [x] 관광 타입 뱃지
+  - [ ] 간단한 개요 (1-2줄) - TourItem 타입에 overview 필드 없음, 상세페이지에서 구현 예정
+- [x] `components/tour-list.tsx` 관광지 목록 컴포넌트
+  - [x] 카드 형태의 그리드 레이아웃
+  - [x] 하드코딩 데이터로 테스트 (app/page.tsx에 MOCK_TOURS 추가)
+  - [x] API 연동하여 실제 데이터 표시 (Server Component에서 getAreaBasedList 호출)
+  - [x] 로딩 상태 (스켈레톤 UI)
+  - [x] 에러 처리 (에러 발생 시 ErrorMessage 표시 및 재시도 버튼)
 
 ### 2.3 필터 기능 추가
 - [ ] `components/tour-filters.tsx` 필터 컴포넌트
