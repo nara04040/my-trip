@@ -50,14 +50,15 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
   const router = useRouter();
   const searchParams = useSearchParams();
 
-  // 현재 필터 값 읽기
-  const currentAreaCode = searchParams.get("areaCode") || "1"; // 기본값: 서울
+  // 현재 필터 값 읽기 (areaCode가 없으면 "all" - 전체 지역)
+  const currentAreaCode = searchParams.get("areaCode") || "all";
   const contentTypeIdParam = searchParams.get("contentTypeId");
   const currentContentTypeId = contentTypeIdParam || undefined;
 
   /**
    * 필터 변경 핸들러
    * URL searchParams를 업데이트하여 Server Component에서 필터링된 결과를 가져옵니다.
+   * 검색 키워드와 다른 필터 파라미터를 유지합니다.
    */
   const handleAreaCodeChange = (value: string) => {
     const params = new URLSearchParams(searchParams.toString());
@@ -73,6 +74,12 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
       params.set("contentTypeId", currentContentTypeId);
     }
     
+    // keyword가 있으면 유지 (검색 + 필터 조합)
+    const keyword = searchParams.get("keyword");
+    if (keyword) {
+      params.set("keyword", keyword);
+    }
+    
     router.push(`/?${params.toString()}`);
   };
 
@@ -85,10 +92,16 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
       params.set("contentTypeId", value);
     }
     
-    // areaCode가 있으면 유지 (없으면 기본값 "1" 사용)
-    const areaCode = searchParams.get("areaCode") || "1";
-    if (areaCode !== "1") {
+    // areaCode가 있으면 유지 (없으면 전체 지역)
+    const areaCode = searchParams.get("areaCode");
+    if (areaCode) {
       params.set("areaCode", areaCode);
+    }
+    
+    // keyword가 있으면 유지 (검색 + 필터 조합)
+    const keyword = searchParams.get("keyword");
+    if (keyword) {
+      params.set("keyword", keyword);
     }
     
     router.push(`/?${params.toString()}`);

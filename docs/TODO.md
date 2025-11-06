@@ -54,16 +54,16 @@
   - [x] 필터링된 결과 표시 (Server Component에서 필터 파라미터 기반 API 호출)
 
 ### 2.4 검색 기능 추가 (MVP 2.3)
-- [ ] `components/tour-search.tsx` 검색창 컴포넌트
-  - [ ] 검색창 UI (헤더에 고정)
-  - [ ] 검색 아이콘 표시
-  - [ ] 엔터 또는 검색 버튼 클릭으로 검색 실행
-  - [ ] 검색 중 로딩 스피너
-  - [ ] `searchKeyword2` API 연동
-  - [ ] 검색 결과 표시
-  - [ ] 검색 결과 개수 표시
-  - [ ] 결과 없음 시 안내 메시지
-  - [ ] 검색 + 필터 조합 동작
+- [x] `components/tour-search.tsx` 검색창 컴포넌트
+  - [x] 검색창 UI (헤더에 고정, 모바일 반응형)
+  - [x] 검색 아이콘 표시
+  - [x] 엔터 또는 검색 버튼 클릭으로 검색 실행
+  - [x] 검색 중 로딩 스피너 (TourList의 isLoading 활용)
+  - [x] `searchKeyword2` API 연동
+  - [x] 검색 결과 표시 (기존 TourList 컴포넌트 재사용)
+  - [x] 검색 결과 개수 표시
+  - [x] 결과 없음 시 안내 메시지
+  - [x] 검색 + 필터 조합 동작 (URL searchParams 통합 관리)
 
 ### 2.5 지도 연동 (MVP 2.2) - ⏰ 내일 구현 예정
 - [ ] `components/naver-map.tsx` 네이버 지도 컴포넌트

@@ -166,16 +166,16 @@ export async function getAreaCodes(
 }
 
 /**
- * 지역 기반 관광정보 조회 (areaBasedList2)
- * 선택된 지역과 관광 타입에 해당하는 관광지 목록을 조회합니다.
+ * 지역 기반 관광정보 조회 (내부 함수)
+ * 단일 지역에 대한 관광지 목록을 조회합니다.
  *
- * @param areaCode 지역코드 (시/도)
- * @param contentTypeId 관광 타입 ID (선택 사항, 전체 조회 시 undefined)
- * @param numOfRows 페이지당 항목 수 (기본값: 20)
- * @param pageNo 페이지 번호 (기본값: 1)
+ * @param areaCode 지역코드 (시/도, 필수)
+ * @param contentTypeId 관광 타입 ID (선택 사항)
+ * @param numOfRows 페이지당 항목 수
+ * @param pageNo 페이지 번호
  * @returns 관광지 목록
  */
-export async function getAreaBasedList(
+async function getAreaBasedListInternal(
   areaCode: string,
   contentTypeId?: ContentTypeId,
   numOfRows: number = 20,
@@ -199,6 +199,88 @@ export async function getAreaBasedList(
   }
 
   return normalizeItem(items.item);
+}
+
+/**
+ * 전체 지역 기반 관광정보 조회
+ * 모든 지역코드를 순회하여 관광지 목록을 조회하고 결과를 합칩니다.
+ *
+ * @param contentTypeId 관광 타입 ID (선택 사항, 전체 조회 시 undefined)
+ * @param numOfRows 지역당 조회할 항목 수 (기본값: 20)
+ * @param pageNo 페이지 번호 (기본값: 1)
+ * @returns 관광지 목록 (중복 제거됨)
+ */
+async function getAllAreasBasedList(
+  contentTypeId?: ContentTypeId,
+  numOfRows: number = 20,
+  pageNo: number = 1
+): Promise<TourItem[]> {
+  try {
+    // 모든 지역코드 조회
+    const areaCodes = await getAreaCodes(50, 1);
+
+    if (areaCodes.length === 0) {
+      return [];
+    }
+
+    // 모든 지역에 대해 병렬로 API 호출
+    const promises = areaCodes.map((area) =>
+      getAreaBasedListInternal(area.code, contentTypeId, numOfRows, pageNo).catch(
+        (error) => {
+          // 개별 지역 조회 실패 시 빈 배열 반환 (다른 지역은 계속 진행)
+          console.error(
+            `Failed to fetch tours for area ${area.code} (${area.name}):`,
+            error
+          );
+          return [];
+        }
+      )
+    );
+
+    const results = await Promise.all(promises);
+
+    // 모든 결과를 합치고 중복 제거 (contentid 기준)
+    const allTours: TourItem[] = [];
+    const seenContentIds = new Set<string>();
+
+    for (const tours of results) {
+      for (const tour of tours) {
+        if (!seenContentIds.has(tour.contentid)) {
+          seenContentIds.add(tour.contentid);
+          allTours.push(tour);
+        }
+      }
+    }
+
+    return allTours;
+  } catch (error) {
+    console.error("Failed to fetch all areas based list:", error);
+    throw error;
+  }
+}
+
+/**
+ * 지역 기반 관광정보 조회 (areaBasedList2)
+ * 선택된 지역과 관광 타입에 해당하는 관광지 목록을 조회합니다.
+ *
+ * @param areaCode 지역코드 (시/도, 선택 사항 - undefined일 경우 전체 지역 조회)
+ * @param contentTypeId 관광 타입 ID (선택 사항, 전체 조회 시 undefined)
+ * @param numOfRows 페이지당 항목 수 (기본값: 20)
+ * @param pageNo 페이지 번호 (기본값: 1)
+ * @returns 관광지 목록
+ */
+export async function getAreaBasedList(
+  areaCode?: string,
+  contentTypeId?: ContentTypeId,
+  numOfRows: number = 20,
+  pageNo: number = 1
+): Promise<TourItem[]> {
+  // areaCode가 없으면 전체 지역 조회
+  if (!areaCode) {
+    return getAllAreasBasedList(contentTypeId, numOfRows, pageNo);
+  }
+
+  return getAreaBasedListInternal(areaCode, contentTypeId, numOfRows, pageNo);
 }
 
 /**
