@@ -6,7 +6,7 @@
  * Server Component에서 한국관광공사 API를 호출하여 실제 데이터를 가져옵니다.
  *
  * 주요 기능:
- * 1. 관광지 기본 정보 표시 (3.2에서 구현 예정)
+ * 1. 관광지 기본 정보 표시 (3.2 완료)
  * 2. 지도 섹션 (3.3에서 구현 예정)
  * 3. 공유 기능 (3.4에서 구현 예정)
  * 4. 추가 정보 섹션 (3.5에서 구현 예정)
@@ -21,6 +21,7 @@ import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
 import { getDetailCommon } from "@/lib/api/tour-api";
 import { Button } from "@/components/ui/button";
+import { DetailInfo } from "@/components/tour-detail/detail-info";
 
 interface PlaceDetailPageProps {
   params: Promise<{
@@ -68,28 +69,18 @@ export default async function PlaceDetailPage({
         </Link>
       </div>
 
-      {/* 기본 정보 섹션 (임시) */}
-      <section className="mb-8">
-        <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <h1 className="text-3xl font-bold mb-4">{tourDetail.title}</h1>
-          <p className="text-muted-foreground">
-            Content ID: {tourDetail.contentid}
-          </p>
-          <p className="text-muted-foreground">
-            Content Type ID: {tourDetail.contenttypeid}
-          </p>
-        </div>
-      </section>
+      {/* 기본 정보 섹션 */}
+      <DetailInfo tour={tourDetail} />
 
       {/* 섹션 구분선 */}
       <hr className="my-8 border-border" />
 
-      {/* 추가 섹션들 (3.2, 3.3, 3.4, 3.5에서 구현 예정) */}
+      {/* 추가 섹션들 (3.3, 3.4, 3.5에서 구현 예정) */}
       <section className="mb-8">
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="text-2xl font-semibold mb-4">추가 정보</h2>
           <p className="text-muted-foreground">
-            이 섹션은 향후 구현 예정입니다.
+            지도, 공유 기능, 운영 정보 등은 향후 구현 예정입니다.
           </p>
         </div>
       </section>
