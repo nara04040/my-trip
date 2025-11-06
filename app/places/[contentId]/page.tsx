@@ -13,6 +13,8 @@
  *    - Open Graph 메타태그 동적 생성
  * 4. 운영 정보 섹션 (3.5 완료)
  *    - 운영시간, 휴무일, 이용요금, 주차, 수용인원, 체험 프로그램, 유모차/반려동물 동반
+ * 5. 이미지 갤러리 섹션 (3.5 완료)
+ *    - 이미지 그리드 레이아웃, 전체화면 모달, 슬라이드 기능
  *
  * @see {@link /docs/PRD.md} - 프로젝트 요구사항 문서
  * @see {@link /docs/TODO.md} - 작업 목록
@@ -23,11 +25,16 @@ import { notFound } from "next/navigation";
 import type { Metadata } from "next";
 import Link from "next/link";
 import { ArrowLeft } from "lucide-react";
-import { getDetailCommon, getDetailIntro } from "@/lib/api/tour-api";
+import {
+  getDetailCommon,
+  getDetailIntro,
+  getDetailImage,
+} from "@/lib/api/tour-api";
 import type { ContentTypeId } from "@/lib/types/tour";
 import { Button } from "@/components/ui/button";
 import { DetailInfo } from "@/components/tour-detail/detail-info";
 import { DetailIntro } from "@/components/tour-detail/detail-intro";
+import { DetailGallery } from "@/components/tour-detail/detail-gallery";
 import { ShareButton } from "@/components/tour-detail/share-button";
 
 interface PlaceDetailPageProps {
@@ -201,6 +208,15 @@ export default async function PlaceDetailPage({
     console.error("Failed to fetch tour intro:", error);
   }
 
+  // 이미지 목록 조회
+  let tourImages = [];
+  try {
+    tourImages = await getDetailImage(contentId);
+  } catch (error) {
+    // 이미지 조회 실패 시에도 페이지는 계속 표시 (이미지 갤러리만 표시 안 함)
+    console.error("Failed to fetch tour images:", error);
+  }
+
   return (
     <main className="container max-w-4xl py-8 px-4 md:px-6">
       {/* 뒤로가기 버튼 및 공유 버튼 */}
@@ -228,12 +244,16 @@ export default async function PlaceDetailPage({
         </>
       )}
 
-      {/* 추가 섹션들 (3.3 지도, 3.5 이미지 갤러리에서 구현 예정) */}
+      {/* 이미지 갤러리 섹션 */}
+      <DetailGallery images={tourImages} title={tourDetail.title} />
+
+      {/* 추가 섹션들 (3.3 지도에서 구현 예정) */}
+      <hr className="my-8 border-border" />
       <section className="mb-8">
         <div className="rounded-lg border bg-card p-6 shadow-sm">
           <h2 className="text-2xl font-semibold mb-4">추가 정보</h2>
           <p className="text-muted-foreground">
-            지도, 이미지 갤러리 등은 향후 구현 예정입니다.
+            지도 기능은 향후 구현 예정입니다.
           </p>
         </div>
       </section>

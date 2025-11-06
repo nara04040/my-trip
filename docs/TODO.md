@@ -143,12 +143,13 @@
   - [x] 체험 프로그램 (있는 경우)
   - [x] 유모차/반려동물 동반 가능 여부
   - [x] HTML 태그 제거 기능 (br 태그는 줄바꿈으로 변환)
-- [ ] `components/tour-detail/detail-gallery.tsx` 이미지 갤러리 컴포넌트
-  - [ ] `detailImage2` API 연동
-  - [ ] 대표 이미지 + 서브 이미지들
-  - [ ] 이미지 클릭 시 전체화면 모달
-  - [ ] 이미지 슬라이드 기능 (swiper 또는 캐러셀)
-  - [ ] 이미지 없으면 기본 이미지
+- [x] `components/tour-detail/detail-gallery.tsx` 이미지 갤러리 컴포넌트
+  - [x] `detailImage2` API 연동
+  - [x] 대표 이미지 + 서브 이미지들 (그리드 레이아웃)
+  - [x] 이미지 클릭 시 전체화면 모달
+  - [x] 이미지 슬라이드 기능 (이전/다음 버튼, 키보드 네비게이션)
+  - [x] 이미지 없으면 기본 이미지
+  - [x] 접근성 개선 (DialogTitle 추가, 스크린 리더 지원)
 
 ## Phase 4: 북마크 페이지 (`/bookmarks`) - 선택 사항
 
