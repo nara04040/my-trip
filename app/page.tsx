@@ -15,14 +15,22 @@
 
 import { TourList } from "@/components/tour-list";
 import { TourFilters } from "@/components/tour-filters";
-import { getAreaBasedList, getAreaCodes, searchKeyword } from "@/lib/api/tour-api";
-import type { ContentTypeId } from "@/lib/types/tour";
+import { TourPagination } from "@/components/tour-pagination";
+import {
+  getAreaBasedListWithPagination,
+  getAreaCodes,
+  searchKeywordWithPagination,
+} from "@/lib/api/tour-api";
+import type { ContentTypeId, SortOption } from "@/lib/types/tour";
+import { sortToursBy } from "@/lib/utils";
 
 interface HomeProps {
   searchParams: Promise<{
     keyword?: string;
     areaCode?: string;
     contentTypeId?: string;
+    sort?: string;
+    pageNo?: string;
   }>;
 }
 
@@ -49,6 +57,8 @@ export default async function Home({ searchParams }: HomeProps) {
   const contentTypeId = params.contentTypeId
     ? (params.contentTypeId as ContentTypeId)
     : undefined;
+  const sort = (params.sort as SortOption) || "latest";
+  const pageNo = params.pageNo ? parseInt(params.pageNo, 10) : 1;
 
   // 검색 모드 여부
   const isSearchMode = !!keyword;
@@ -64,21 +74,45 @@ export default async function Home({ searchParams }: HomeProps) {
 
   // 관광지 목록 조회 (검색 또는 필터)
   let tours;
+  let totalCount = 0;
   let error: Error | null = null;
 
   try {
     if (isSearchMode) {
-      // 검색 모드: searchKeyword API 호출 (areaCode가 없으면 전체 지역 검색)
-      tours = await searchKeyword(keyword, areaCode, contentTypeId, 20, 1);
+      // 검색 모드: searchKeywordWithPagination API 호출
+      const result = await searchKeywordWithPagination(
+        keyword,
+        areaCode,
+        contentTypeId,
+        20,
+        pageNo
+      );
+      tours = result.items;
+      totalCount = result.totalCount;
     } else {
-      // 필터 모드: getAreaBasedList API 호출 (areaCode가 없으면 전체 지역 조회)
-      tours = await getAreaBasedList(areaCode, contentTypeId, 20, 1);
+      // 필터 모드: getAreaBasedListWithPagination API 호출
+      const result = await getAreaBasedListWithPagination(
+        areaCode,
+        contentTypeId,
+        20,
+        pageNo
+      );
+      tours = result.items;
+      totalCount = result.totalCount;
     }
+
+    // 클라이언트 사이드 정렬 (API는 정렬 기능을 직접 지원하지 않음)
+    tours = sortToursBy(tours, sort);
   } catch (err) {
     console.error("Failed to fetch tours:", err);
     error = err instanceof Error ? err : new Error("관광지 정보를 불러오는데 실패했습니다.");
     tours = [];
+    totalCount = 0;
   }
+
+  // 전체 페이지 수 계산
+  const itemsPerPage = 20;
+  const totalPages = Math.ceil(totalCount / itemsPerPage);
 
   // 검색 결과 개수 표시용 메시지
   const resultMessage = isSearchMode
@@ -108,6 +142,16 @@ export default async function Home({ searchParams }: HomeProps) {
 
       {/* 관광지 목록 컴포넌트 */}
       <TourList tours={tours} error={error} emptyMessage={emptyMessage} />
+
+      {/* 페이지네이션 컴포넌트 */}
+      {!error && tours.length > 0 && (
+        <TourPagination
+          currentPage={pageNo}
+          totalPages={totalPages}
+          itemsPerPage={itemsPerPage}
+          totalItems={totalCount}
+        />
+      )}
     </main>
   );
 }

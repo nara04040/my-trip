@@ -229,3 +229,26 @@ export type ConvertCoordinates = (
   mapx: string,
   mapy: string
 ) => Coordinates;
+
+/**
+ * 정렬 옵션 타입
+ */
+export type SortOption = "latest" | "name";
+
+/**
+ * 정렬 옵션 이름 매핑
+ */
+export const SORT_OPTION_NAMES: Record<SortOption, string> = {
+  latest: "최신순",
+  name: "이름순",
+} as const;
+
+/**
+ * 페이지네이션을 포함한 관광지 목록 응답 타입
+ */
+export interface TourListResponse {
+  /** 관광지 목록 */
+  items: TourItem[];
+  /** 전체 개수 */
+  totalCount: number;
+}

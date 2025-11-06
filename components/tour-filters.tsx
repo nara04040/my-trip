@@ -18,7 +18,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { MapPin, Tag } from "lucide-react";
+import { MapPin, Tag, ArrowUpDown } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -26,8 +26,8 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import type { AreaCode, ContentTypeId } from "@/lib/types/tour";
-import { CONTENT_TYPE, CONTENT_TYPE_NAMES } from "@/lib/types/tour";
+import type { AreaCode, ContentTypeId, SortOption } from "@/lib/types/tour";
+import { CONTENT_TYPE, CONTENT_TYPE_NAMES, SORT_OPTION_NAMES } from "@/lib/types/tour";
 import { cn } from "@/lib/utils";
 
 interface TourFiltersProps {
@@ -54,6 +54,7 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
   const currentAreaCode = searchParams.get("areaCode") || "all";
   const contentTypeIdParam = searchParams.get("contentTypeId");
   const currentContentTypeId = contentTypeIdParam || undefined;
+  const currentSort = (searchParams.get("sort") as SortOption) || "latest";
 
   /**
    * 필터 변경 핸들러
@@ -80,6 +81,15 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
       params.set("keyword", keyword);
     }
     
+    // sort가 있으면 유지
+    const sort = searchParams.get("sort");
+    if (sort) {
+      params.set("sort", sort);
+    }
+    
+    // pageNo는 필터 변경 시 1로 리셋
+    params.delete("pageNo");
+    
     router.push(`/?${params.toString()}`);
   };
 
@@ -103,6 +113,46 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
     if (keyword) {
       params.set("keyword", keyword);
     }
+    
+    // sort가 있으면 유지
+    const sort = searchParams.get("sort");
+    if (sort) {
+      params.set("sort", sort);
+    }
+    
+    // pageNo는 필터 변경 시 1로 리셋
+    params.delete("pageNo");
+    
+    router.push(`/?${params.toString()}`);
+  };
+
+  const handleSortChange = (value: string) => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    if (value === "latest" || !value) {
+      params.set("sort", "latest");
+    } else {
+      params.set("sort", value);
+    }
+    
+    // 기존 필터 파라미터 유지
+    const areaCode = searchParams.get("areaCode");
+    if (areaCode) {
+      params.set("areaCode", areaCode);
+    }
+    
+    const contentTypeId = searchParams.get("contentTypeId");
+    if (contentTypeId) {
+      params.set("contentTypeId", contentTypeId);
+    }
+    
+    const keyword = searchParams.get("keyword");
+    if (keyword) {
+      params.set("keyword", keyword);
+    }
+    
+    // pageNo는 정렬 변경 시 1로 리셋
+    params.delete("pageNo");
     
     router.push(`/?${params.toString()}`);
   };
@@ -149,6 +199,23 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
             {Object.entries(CONTENT_TYPE).map(([key, value]) => (
               <SelectItem key={value} value={value}>
                 {CONTENT_TYPE_NAMES[value as ContentTypeId]}
+              </SelectItem>
+            ))}
+          </SelectContent>
+        </Select>
+      </div>
+
+      {/* 정렬 필터 */}
+      <div className="flex items-center gap-2 min-w-[200px] shrink-0">
+        <ArrowUpDown className="h-4 w-4 text-muted-foreground shrink-0" />
+        <Select value={currentSort} onValueChange={handleSortChange}>
+          <SelectTrigger className="w-full">
+            <SelectValue placeholder="정렬 기준" />
+          </SelectTrigger>
+          <SelectContent>
+            {Object.entries(SORT_OPTION_NAMES).map(([key, name]) => (
+              <SelectItem key={key} value={key}>
+                {name}
               </SelectItem>
             ))}
           </SelectContent>

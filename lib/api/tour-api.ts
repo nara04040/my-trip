@@ -267,7 +267,7 @@ async function getAllAreasBasedList(
  * @param contentTypeId 관광 타입 ID (선택 사항, 전체 조회 시 undefined)
  * @param numOfRows 페이지당 항목 수 (기본값: 20)
  * @param pageNo 페이지 번호 (기본값: 1)
- * @returns 관광지 목록
+ * @returns 관광지 목록 (레거시 호환성을 위해 배열 반환, totalCount는 별도 함수 사용)
  */
 export async function getAreaBasedList(
   areaCode?: string,
@@ -284,6 +284,50 @@ export async function getAreaBasedList(
 }
 
 /**
+ * 지역 기반 관광정보 조회 (페이지네이션 포함)
+ * totalCount를 포함한 응답을 반환합니다.
+ *
+ * @param areaCode 지역코드 (시/도, 선택 사항)
+ * @param contentTypeId 관광 타입 ID (선택 사항)
+ * @param numOfRows 페이지당 항목 수 (기본값: 20)
+ * @param pageNo 페이지 번호 (기본값: 1)
+ * @returns 관광지 목록 및 전체 개수
+ */
+export async function getAreaBasedListWithPagination(
+  areaCode?: string,
+  contentTypeId?: ContentTypeId,
+  numOfRows: number = 20,
+  pageNo: number = 1
+): Promise<{ items: TourItem[]; totalCount: number }> {
+  // areaCode가 없으면 전체 지역 조회는 totalCount 계산이 복잡하므로
+  // 일단 단일 지역 조회만 지원
+  if (!areaCode) {
+    // 전체 지역의 경우 정확한 totalCount를 계산하기 어려우므로
+    // 현재 조회된 항목 수를 반환 (임시)
+    const items = await getAllAreasBasedList(contentTypeId, numOfRows, pageNo);
+    return { items, totalCount: items.length };
+  }
+
+  const params: Record<string, string | number> = {
+    areaCode,
+    numOfRows,
+    pageNo,
+  };
+
+  if (contentTypeId) {
+    params.contentTypeId = contentTypeId;
+  }
+
+  const response = await fetchTourApi<TourItem>("/areaBasedList2", params);
+
+  const items = response.response.body.items;
+  const itemsArray = items && items.item ? normalizeItem(items.item) : [];
+  const totalCount = response.response.body.totalCount || itemsArray.length;
+
+  return { items: itemsArray, totalCount };
+}
+
+/**
  * 키워드 검색 (searchKeyword2)
  * 입력한 키워드로 관광지를 검색합니다.
  *
@@ -292,7 +336,7 @@ export async function getAreaBasedList(
  * @param contentTypeId 관광 타입 필터 (선택 사항)
  * @param numOfRows 페이지당 항목 수 (기본값: 20)
  * @param pageNo 페이지 번호 (기본값: 1)
- * @returns 검색 결과 관광지 목록
+ * @returns 검색 결과 관광지 목록 (레거시 호환성을 위해 배열 반환)
  */
 export async function searchKeyword(
   keyword: string,
@@ -323,6 +367,47 @@ export async function searchKeyword(
   }
 
   return normalizeItem(items.item);
+}
+
+/**
+ * 키워드 검색 (페이지네이션 포함)
+ * totalCount를 포함한 응답을 반환합니다.
+ *
+ * @param keyword 검색 키워드
+ * @param areaCode 지역코드 필터 (선택 사항)
+ * @param contentTypeId 관광 타입 필터 (선택 사항)
+ * @param numOfRows 페이지당 항목 수 (기본값: 20)
+ * @param pageNo 페이지 번호 (기본값: 1)
+ * @returns 검색 결과 관광지 목록 및 전체 개수
+ */
+export async function searchKeywordWithPagination(
+  keyword: string,
+  areaCode?: string,
+  contentTypeId?: ContentTypeId,
+  numOfRows: number = 20,
+  pageNo: number = 1
+): Promise<{ items: TourItem[]; totalCount: number }> {
+  const params: Record<string, string | number> = {
+    keyword,
+    numOfRows,
+    pageNo,
+  };
+
+  if (areaCode) {
+    params.areaCode = areaCode;
+  }
+
+  if (contentTypeId) {
+    params.contentTypeId = contentTypeId;
+  }
+
+  const response = await fetchTourApi<TourItem>("/searchKeyword2", params);
+
+  const items = response.response.body.items;
+  const itemsArray = items && items.item ? normalizeItem(items.item) : [];
+  const totalCount = response.response.body.totalCount || itemsArray.length;
+
+  return { items: itemsArray, totalCount };
 }
 
 /**
