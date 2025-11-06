@@ -41,17 +41,17 @@
   - [ ] 간단한 개요 (1-2줄) - TourItem 타입에 overview 필드 없음, 상세페이지에서 구현 예정
 - [x] `components/tour-list.tsx` 관광지 목록 컴포넌트
   - [x] 카드 형태의 그리드 레이아웃
-  - [x] 하드코딩 데이터로 테스트 (app/page.tsx에 MOCK_TOURS 추가)
+  - [x] 하드코딩 데이터로 테스트
   - [x] API 연동하여 실제 데이터 표시 (Server Component에서 getAreaBasedList 호출)
   - [x] 로딩 상태 (스켈레톤 UI)
   - [x] 에러 처리 (에러 발생 시 ErrorMessage 표시 및 재시도 버튼)
 
 ### 2.3 필터 기능 추가
-- [ ] `components/tour-filters.tsx` 필터 컴포넌트
-  - [ ] 지역 필터 UI (시/도 단위 선택, "전체" 옵션)
-  - [ ] 관광 타입 필터 UI (12, 14, 15, 25, 28, 32, 38, 39, "전체")
-  - [ ] 필터 상태 관리
-  - [ ] 필터링된 결과 표시
+- [x] `components/tour-filters.tsx` 필터 컴포넌트
+  - [x] 지역 필터 UI (시/도 단위 선택, "전체" 옵션)
+  - [x] 관광 타입 필터 UI (12, 14, 15, 25, 28, 32, 38, 39, "전체")
+  - [x] 필터 상태 관리 (URL searchParams 기반)
+  - [x] 필터링된 결과 표시 (Server Component에서 필터 파라미터 기반 API 호출)
 
 ### 2.4 검색 기능 추가 (MVP 2.3)
 - [ ] `components/tour-search.tsx` 검색창 컴포넌트
