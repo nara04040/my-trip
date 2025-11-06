@@ -9,6 +9,7 @@
  * - TourItem: 관광지 목록 조회 (areaBasedList2) 응답
  * - TourDetail: 관광지 상세 정보 (detailCommon2) 응답
  * - TourIntro: 관광지 소개 정보 (detailIntro2) 응답
+ * - AreaCode: 지역코드 조회 (areaCode2) 응답
  *
  * @see {@link /docs/PRD.md} - 프로젝트 요구사항 문서
  */
@@ -113,6 +114,34 @@ export interface TourIntro {
 }
 
 /**
+ * 지역코드 조회 응답 타입 (areaCode2)
+ */
+export interface AreaCode {
+  /** 지역코드 (시/도 단위) */
+  code: string;
+  /** 지역명 */
+  name: string;
+  /** 하위 지역코드 (시/군/구, 선택 사항) */
+  rnum?: number;
+}
+
+/**
+ * 관광지 이미지 정보 응답 타입 (detailImage2)
+ */
+export interface TourImage {
+  /** 콘텐츠ID */
+  contentid: string;
+  /** 이미지 원본 URL */
+  originimgurl: string;
+  /** 이미지 썸네일 URL */
+  smallimageurl: string;
+  /** 이미지 설명 */
+  imgname?: string;
+  /** 이미지 순서 */
+  serialnum?: string;
+}
+
+/**
  * 관광 타입 코드 (Content Type ID)
  */
 export const CONTENT_TYPE = {
@@ -200,4 +229,3 @@ export type ConvertCoordinates = (
   mapx: string,
   mapy: string
 ) => Coordinates;
-

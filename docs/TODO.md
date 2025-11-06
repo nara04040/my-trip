@@ -4,14 +4,14 @@
 
 - [x] `lib/types/` 디렉토리
   - [x] `tour.ts` 타입 정의 (TourItem, TourDetail, TourIntro 등)
-- [ ] `lib/api/` 디렉토리
-  - [ ] `tour-api.ts` 한국관광공사 API 호출 함수들
-    - [ ] `areaCode2` 지역코드 조회
-    - [ ] `areaBasedList2` 지역 기반 관광정보 조회
-    - [ ] `searchKeyword2` 키워드 검색
-    - [ ] `detailCommon2` 공통 정보 조회
-    - [ ] `detailIntro2` 소개 정보 조회
-    - [ ] `detailImage2` 이미지 목록 조회
+- [x] `lib/api/` 디렉토리
+  - [x] `tour-api.ts` 한국관광공사 API 호출 함수들
+    - [x] `areaCode2` 지역코드 조회
+    - [x] `areaBasedList2` 지역 기반 관광정보 조회
+    - [x] `searchKeyword2` 키워드 검색
+    - [x] `detailCommon2` 공통 정보 조회
+    - [x] `detailIntro2` 소개 정보 조회
+    - [x] `detailImage2` 이미지 목록 조회
   - [ ] `supabase-api.ts` Supabase 쿼리 함수들 (북마크)
     - [ ] 북마크 추가/삭제
     - [ ] 북마크 목록 조회
