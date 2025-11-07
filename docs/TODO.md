@@ -23,10 +23,11 @@
     - [x] `detailIntro2` 소개 정보 조회
     - [x] `detailImage2` 이미지 목록 조회
     - [x] `detailPetTour2` 반려동물 동반 여행 정보 조회 (MVP 2.5)
-    - [x] `supabase-api.ts` Supabase 쿼리 함수들 (북마크)
-    - [x] 북마크 추가/삭제
-    - [x] 북마크 목록 조회
-    - [x] 북마크 여부 확인
+    - [x] `supabase-api.ts` Supabase 쿼리 함수들 (북마크, 서버 전용)
+    - [x] `supabase-api-client.ts` Supabase 쿼리 함수들 (북마크, 클라이언트 전용)
+    - [x] 북마크 추가/삭제 (서버/클라이언트)
+    - [x] 북마크 목록 조회 (서버/클라이언트)
+    - [x] 북마크 여부 확인 (서버/클라이언트)
 - [x] `components/ui/` 디렉토리
   - [x] 기본 shadcn/ui 컴포넌트 (button, dialog, form, input, label, textarea, accordion)
   - [x] 공통 컴포넌트 (로딩 스피너, 에러 메시지, 스켈레톤 UI)
@@ -397,31 +398,49 @@
 
 ### 5.2 북마크 기능 구현
 
-- [ ] `components/bookmarks/bookmark-button.tsx` 북마크 버튼 컴포넌트
-  - [ ] 별 아이콘 (채워짐/비어있음)
-  - [ ] 북마크 추가/제거 기능
-  - [ ] Supabase DB 연동
-  - [ ] 인증된 사용자 확인
-  - [ ] 로그인하지 않은 경우: 로그인 유도 또는 localStorage 임시 저장
-- [ ] 상세페이지에 북마크 버튼 추가
-  - [ ] `app/places/[contentId]/page.tsx`에 북마크 버튼 통합
-  - [ ] 북마크 상태 확인 및 표시
+- [x] `components/bookmarks/bookmark-button.tsx` 북마크 버튼 컴포넌트
+  - [x] 별 아이콘 (채워짐/비어있음)
+  - [x] 북마크 추가/제거 기능
+  - [x] Supabase DB 연동
+  - [x] 인증된 사용자 확인
+  - [x] 로그인하지 않은 경우: 로그인 모달 표시 (Clerk SignInButton)
+- [x] `lib/api/supabase-api-client.ts` Client Component용 북마크 API 함수들
+  - [x] 클라이언트 전용 함수들을 별도 파일로 분리 (서버 전용 모듈과 분리)
+  - [x] addBookmarkClient, removeBookmarkClient, isBookmarkedClient, getBookmarksClient 함수 구현
+- [x] 상세페이지에 북마크 버튼 추가
+  - [x] `app/places/[contentId]/page.tsx`에 북마크 버튼 통합
+  - [x] 북마크 상태 확인 및 표시
+  - [x] ShareButton 옆 헤더 영역에 배치
 
 ### 5.3 북마크 목록 페이지
 
-- [ ] `app/bookmarks/page.tsx` 북마크 목록 페이지
-  - [ ] 인증된 사용자만 접근 가능
-- [ ] `components/bookmarks/bookmark-list.tsx` 북마크 목록 컴포넌트
-  - [ ] 북마크한 관광지 목록 표시
-  - [ ] 카드 레이아웃 (Phase 2.2와 동일한 tour-card 사용)
-  - [ ] 정렬 옵션 (최신순, 이름순, 지역별)
-  - [ ] 일괄 삭제 기능
+- [x] `app/bookmarks/page.tsx` 북마크 목록 페이지
+  - [x] 인증된 사용자만 접근 가능 (인증되지 않은 경우 홈으로 리다이렉트)
+  - [x] 북마크 목록 조회 및 관광지 정보 병렬 조회
+  - [x] 빈 상태 처리
+- [x] `components/bookmarks/bookmark-list.tsx` 북마크 목록 컴포넌트
+  - [x] 북마크한 관광지 목록 표시
+  - [x] 카드 레이아웃 (Phase 2.2와 동일한 tour-card 사용)
+  - [x] 정렬 옵션 (최신순, 이름순, 지역별)
+    - [x] 최신순: created_at 기준 내림차순
+    - [x] 이름순: title 기준 오름차순 (한글 정렬)
+    - [x] 지역별: areacode 또는 주소에서 지역명 추출하여 정렬
+  - [x] 일괄 삭제 기능
+    - [x] 체크박스로 북마크 선택
+    - [x] 전체 선택/해제 기능
+    - [x] 선택된 북마크 삭제 (삭제 확인 다이얼로그)
+    - [x] 개별 북마크 삭제 (카드 호버 시 삭제 버튼)
+- [x] 북마크 페이지 네비게이션 링크
+  - [x] `components/Navbar.tsx`에 북마크 링크 추가
+  - [x] 로그인한 사용자에게만 표시 (SignedIn 컴포넌트 사용)
+  - [x] 북마크 아이콘 및 텍스트 표시 (반응형: 모바일에서는 아이콘만)
+  - [x] UserButton 옆에 배치
 
 ## Phase 6: 최적화 & 배포
 
 - [ ] 이미지 최적화
   - [x] `next.config.ts` 기본 설정 (존재)
-  - [ ] `next.config.ts` 외부 도메인 설정 (한국관광공사 이미지 도메인 추가 필요)
+  - [ ] `next.config.ts` 외부 도메인 설정 (한국 관광공사 이미지 도메인 추가 필요)
   - [ ] 이미지 레이지 로딩
   - [ ] Placeholder 이미지 처리
 - [ ] 전역 에러 핸들링 개선

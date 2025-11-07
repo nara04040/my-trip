@@ -62,3 +62,16 @@ export interface BookmarkWithTour extends Bookmark {
   };
 }
 
+/**
+ * 북마크 + TourItem 정보 (북마크 목록에서 사용)
+ */
+export interface BookmarkWithTourItem extends Bookmark {
+  /** 관광지 정보 (TourItem) */
+  tourItem: import("./tour").TourItem;
+}
+
+/**
+ * 북마크 정렬 옵션
+ */
+export type BookmarkSortOption = "latest" | "name" | "region";
+

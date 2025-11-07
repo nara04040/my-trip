@@ -2,12 +2,13 @@
  * @file Navbar.tsx
  * @description 네비게이션 바 컴포넌트
  *
- * 헤더 네비게이션 바로, 로고, 검색창, 로그인/회원가입 버튼을 포함합니다.
+ * 헤더 네비게이션 바로, 로고, 검색창, 북마크 링크, 로그인/회원가입 버튼을 포함합니다.
  *
  * 주요 기능:
  * 1. 로고 (My Trip)
  * 2. 검색창 (데스크톱: 헤더 내부, 모바일: 반응형)
- * 3. 로그인/회원가입 버튼
+ * 3. 북마크 링크 (로그인한 사용자만 표시)
+ * 4. 로그인/회원가입 버튼
  *
  * @see {@link /docs/reference/design/DESIGN.md} - 디자인 가이드
  */
@@ -19,6 +20,7 @@ import Link from "next/link";
 import React, { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { TourSearch } from "@/components/tour-search";
+import { Bookmark } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -36,7 +38,7 @@ const Navbar = () => {
           </Suspense>
         </div>
 
-        {/* 로그인/회원가입 */}
+        {/* 로그인/회원가입 및 북마크 */}
         <div className="flex gap-2 items-center shrink-0">
           <SignedOut>
             <SignInButton mode="modal">
@@ -46,6 +48,13 @@ const Navbar = () => {
             </SignInButton>
           </SignedOut>
           <SignedIn>
+            {/* 북마크 링크 */}
+            <Link href="/bookmarks">
+              <Button variant="ghost" size="sm" className="gap-2" aria-label="북마크 목록">
+                <Bookmark className="h-4 w-4" />
+                <span className="hidden sm:inline">북마크</span>
+              </Button>
+            </Link>
             <UserButton />
           </SignedIn>
         </div>
