@@ -44,6 +44,7 @@ import { DetailGallery } from "@/components/tour-detail/detail-gallery";
 import { DetailMapWrapper } from "@/components/tour-detail/detail-map-wrapper";
 import { ShareButton } from "@/components/tour-detail/share-button";
 import { DetailPetTour } from "@/components/tour-detail/detail-pet-tour";
+import { BookmarkButton } from "@/components/bookmarks/bookmark-button";
 
 interface PlaceDetailPageProps {
   params: Promise<{
@@ -236,7 +237,7 @@ export default async function PlaceDetailPage({
 
   return (
     <main className="container max-w-4xl py-8 px-4 md:px-6">
-      {/* 뒤로가기 버튼 및 공유 버튼 */}
+      {/* 뒤로가기 버튼 및 공유/북마크 버튼 */}
       <div className="mb-6 flex items-center justify-between">
         <Link href="/">
           <Button variant="ghost" size="sm" className="gap-2">
@@ -244,7 +245,10 @@ export default async function PlaceDetailPage({
             뒤로가기
           </Button>
         </Link>
-        <ShareButton />
+        <div className="flex items-center gap-2">
+          <BookmarkButton contentId={contentId} />
+          <ShareButton />
+        </div>
       </div>
 
       {/* 기본 정보 섹션 */}
