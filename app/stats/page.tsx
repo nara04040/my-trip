@@ -22,6 +22,8 @@
 import Link from "next/link";
 import { ArrowLeft, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { StatsSummary } from "@/components/stats/stats-summary";
+import { getStatsSummary } from "@/lib/api/stats-api";
 
 /**
  * 메타데이터 설정
@@ -44,20 +46,29 @@ export const revalidate = 3600; // 1시간마다 재검증
 /**
  * 통계 대시보드 페이지 컴포넌트
  *
- * Phase 4.1: 기본 레이아웃 구조만 구현
- * - 페이지 제목 및 설명
- * - 뒤로가기 버튼
- * - 섹션 구조 준비
+ * Phase 4.1-4.4 구현 완료:
+ * - 페이지 기본 구조
+ * - 타입 정의
+ * - 통계 데이터 수집 함수
+ * - 통계 요약 카드 컴포넌트
  *
  * 향후 구현:
- * - Phase 4.2: 타입 정의
- * - Phase 4.3: 통계 데이터 수집 함수
- * - Phase 4.4: 통계 요약 카드
  * - Phase 4.5: 지역별 분포 차트
  * - Phase 4.6: 타입별 분포 차트
  * - Phase 4.7: 페이지 통합 및 최적화
  */
 export default async function StatsPage() {
+  // 통계 데이터 조회
+  let statsSummary;
+  let error: Error | null = null;
+
+  try {
+    statsSummary = await getStatsSummary();
+  } catch (err) {
+    console.error("Failed to fetch stats summary:", err);
+    error = err instanceof Error ? err : new Error("통계 데이터를 불러오는데 실패했습니다.");
+  }
+
   return (
     <main className="container max-w-6xl py-8 px-4 md:px-6">
       {/* 뒤로가기 버튼 */}
@@ -84,28 +95,19 @@ export default async function StatsPage() {
       {/* 섹션 구분선 */}
       <hr className="my-8 border-border" />
 
-      {/* 통계 요약 카드 섹션 (Phase 4.4에서 구현 예정) */}
+      {/* 통계 요약 카드 섹션 */}
       <section className="mb-12">
         <h2 className="text-2xl font-semibold mb-4">통계 요약</h2>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-          {/* 플레이스홀더 카드 */}
+        {error ? (
           <div className="p-6 border rounded-lg bg-card">
-            <p className="text-sm text-muted-foreground mb-2">전체 관광지 수</p>
-            <p className="text-2xl font-bold">-</p>
+            <p className="text-red-500 mb-2">통계 데이터를 불러오는데 실패했습니다.</p>
+            <p className="text-sm text-muted-foreground">
+              {error.message}
+            </p>
           </div>
-          <div className="p-6 border rounded-lg bg-card">
-            <p className="text-sm text-muted-foreground mb-2">Top 1 지역</p>
-            <p className="text-lg font-semibold">-</p>
-          </div>
-          <div className="p-6 border rounded-lg bg-card">
-            <p className="text-sm text-muted-foreground mb-2">Top 2 지역</p>
-            <p className="text-lg font-semibold">-</p>
-          </div>
-          <div className="p-6 border rounded-lg bg-card">
-            <p className="text-sm text-muted-foreground mb-2">Top 3 지역</p>
-            <p className="text-lg font-semibold">-</p>
-          </div>
-        </div>
+        ) : (
+          <StatsSummary summary={statsSummary} isLoading={!statsSummary} />
+        )}
       </section>
 
       {/* 섹션 구분선 */}

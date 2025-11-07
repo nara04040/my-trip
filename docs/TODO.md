@@ -265,57 +265,57 @@
 
 ### 4.2 타입 정의
 
-- [ ] `lib/types/stats.ts` 통계 타입 정의 파일 생성
-  - [ ] `RegionStats` 인터페이스 정의
-    - [ ] 지역 코드 (areaCode)
-    - [ ] 지역명 (areaName)
-    - [ ] 관광지 개수 (count)
-  - [ ] `TypeStats` 인터페이스 정의
-    - [ ] 타입 코드 (contentTypeId)
-    - [ ] 타입명 (typeName)
-    - [ ] 관광지 개수 (count)
-    - [ ] 비율 (percentage)
-  - [ ] `StatsSummary` 인터페이스 정의
-    - [ ] 전체 관광지 수 (totalCount)
-    - [ ] 상위 3개 지역 (topRegions)
-    - [ ] 상위 3개 타입 (topTypes)
-    - [ ] 마지막 업데이트 시간 (lastUpdated)
+- [x] `lib/types/stats.ts` 통계 타입 정의 파일 생성
+  - [x] `RegionStats` 인터페이스 정의
+    - [x] 지역 코드 (areaCode)
+    - [x] 지역명 (areaName)
+    - [x] 관광지 개수 (count)
+  - [x] `TypeStats` 인터페이스 정의
+    - [x] 타입 코드 (contentTypeId)
+    - [x] 타입명 (typeName)
+    - [x] 관광지 개수 (count)
+    - [x] 비율 (percentage)
+  - [x] `StatsSummary` 인터페이스 정의
+    - [x] 전체 관광지 수 (totalCount)
+    - [x] 상위 3개 지역 (topRegions)
+    - [x] 상위 3개 타입 (topTypes)
+    - [x] 마지막 업데이트 시간 (lastUpdated)
 
 ### 4.3 통계 데이터 수집 함수
 
-- [ ] `lib/api/stats-api.ts` 통계 API 함수 파일 생성
-  - [ ] `getRegionStats()` 함수 구현
-    - [ ] 모든 지역 코드 조회 (`areaCode2` API)
-    - [ ] 각 지역별 관광지 개수 집계 (`areaBasedList2` API, totalCount 활용)
-    - [ ] RegionStats[] 형태로 반환
-    - [ ] 에러 처리
-  - [ ] `getTypeStats()` 함수 구현
-    - [ ] 각 타입별 관광지 개수 집계 (`areaBasedList2` API, totalCount 활용)
-    - [ ] 타입 코드: 12, 14, 15, 25, 28, 32, 38, 39
-    - [ ] 비율 계산 (각 타입 개수 / 전체 개수 \* 100)
-    - [ ] TypeStats[] 형태로 반환
-    - [ ] 에러 처리
-  - [ ] `getStatsSummary()` 함수 구현
-    - [ ] getRegionStats()와 getTypeStats() 병렬 호출
-    - [ ] 전체 관광지 수 계산
-    - [ ] Top 3 지역 추출 (개수 기준 정렬)
-    - [ ] Top 3 타입 추출 (개수 기준 정렬)
-    - [ ] 현재 시간을 lastUpdated로 설정
-    - [ ] StatsSummary 형태로 반환
-    - [ ] 에러 처리
+- [x] `lib/api/stats-api.ts` 통계 API 함수 파일 생성
+  - [x] `getRegionStats()` 함수 구현
+    - [x] 모든 지역 코드 조회 (`areaCode2` API)
+    - [x] 각 지역별 관광지 개수 집계 (`areaBasedList2` API, totalCount 활용)
+    - [x] RegionStats[] 형태로 반환
+    - [x] 에러 처리
+  - [x] `getTypeStats()` 함수 구현
+    - [x] 각 타입별 관광지 개수 집계 (`areaBasedList2` API, totalCount 활용)
+    - [x] 타입 코드: 12, 14, 15, 25, 28, 32, 38, 39
+    - [x] 비율 계산 (각 타입 개수 / 전체 개수 \* 100)
+    - [x] TypeStats[] 형태로 반환
+    - [x] 에러 처리
+  - [x] `getStatsSummary()` 함수 구현
+    - [x] getRegionStats()와 getTypeStats() 병렬 호출
+    - [x] 전체 관광지 수 계산
+    - [x] Top 3 지역 추출 (개수 기준 정렬)
+    - [x] Top 3 타입 추출 (개수 기준 정렬)
+    - [x] 현재 시간을 lastUpdated로 설정
+    - [x] StatsSummary 형태로 반환
+    - [x] 에러 처리
 
 ### 4.4 통계 요약 카드
 
-- [ ] `components/stats/stats-summary.tsx` 통계 요약 카드 컴포넌트 생성
-  - [ ] StatsSummary 타입 props 받기
-  - [ ] 전체 관광지 수 표시 (큰 숫자로 강조)
-  - [ ] Top 3 지역 표시 (지역명 + 개수)
-  - [ ] Top 3 타입 표시 (타입명 + 개수)
-  - [ ] 마지막 업데이트 시간 표시 (상대 시간 표시)
-  - [ ] 카드 레이아웃 디자인 (그리드 또는 플렉스)
-  - [ ] 로딩 상태 처리 (Skeleton UI)
-  - [ ] 아이콘 추가 (lucide-react 사용)
-  - [ ] 반응형 디자인
+- [x] `components/stats/stats-summary.tsx` 통계 요약 카드 컴포넌트 생성
+  - [x] StatsSummary 타입 props 받기
+  - [x] 전체 관광지 수 표시 (큰 숫자로 강조)
+  - [x] Top 3 지역 표시 (지역명 + 개수)
+  - [x] Top 3 타입 표시 (타입명 + 개수)
+  - [x] 마지막 업데이트 시간 표시 (상대 시간 표시)
+  - [x] 카드 레이아웃 디자인 (그리드 또는 플렉스)
+  - [x] 로딩 상태 처리 (Skeleton UI)
+  - [x] 아이콘 추가 (lucide-react 사용)
+  - [x] 반응형 디자인
 
 ### 4.5 지역별 분포 차트 (Bar Chart)
 
