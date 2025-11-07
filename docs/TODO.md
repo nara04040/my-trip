@@ -37,11 +37,13 @@
 ## Phase 2: 홈페이지 (`/`) - 관광지 목록
 
 ### 2.1 페이지 기본 구조
+
 - [x] `app/page.tsx` 홈페이지 레이아웃
   - [x] 기본 UI 구조 (헤더, 메인 영역)
   - [x] 반응형 레이아웃 설정
 
 ### 2.2 관광지 목록 기능 (MVP 2.1)
+
 - [x] `components/tour-card.tsx` 관광지 카드 컴포넌트
   - [x] 썸네일 이미지 표시 (없으면 기본 이미지)
   - [x] 관광지명
@@ -60,6 +62,7 @@
   - [x] 에러 처리 (에러 발생 시 ErrorMessage 표시 및 재시도 버튼)
 
 ### 2.3 필터 기능 추가
+
 - [x] `components/tour-filters.tsx` 필터 컴포넌트
   - [x] 지역 필터 UI (시/도 단위 선택, "전체" 옵션)
   - [x] 관광 타입 필터 UI (12, 14, 15, 25, 28, 32, 38, 39, "전체")
@@ -73,6 +76,7 @@
     - [ ] API 연동 시 반려동물 관련 파라미터 전달
 
 ### 2.4 검색 기능 추가 (MVP 2.3)
+
 - [x] `components/tour-search.tsx` 검색창 컴포넌트
   - [x] 검색창 UI (헤더에 고정, 모바일 반응형)
   - [x] 검색 아이콘 표시
@@ -85,6 +89,7 @@
   - [x] 검색 + 필터 조합 동작 (URL searchParams 통합 관리)
 
 ### 2.5 지도 연동 (MVP 2.2) - ⏰ 내일 구현 예정
+
 - [ ] `components/naver-map.tsx` 네이버 지도 컴포넌트
   - [ ] 기본 지도 표시 (Naver Maps API v3 NCP)
   - [ ] 초기 중심 좌표 설정 (선택된 지역 기준)
@@ -105,6 +110,7 @@
   - [ ] 지도 최소 높이 설정 (400px 모바일, 600px 데스크톱)
 
 ### 2.6 정렬 & 페이지네이션
+
 - [x] 정렬 옵션
   - [x] 최신순 (modifiedtime 기준)
   - [x] 이름순 (가나다순)
@@ -115,6 +121,7 @@
 ## Phase 3: 상세페이지 (`/places/[contentId]`)
 
 ### 3.1 페이지 기본 구조
+
 - [x] `app/places/[contentId]/page.tsx` 상세페이지
   - [x] 기본 레이아웃 구조 (뒤로가기 버튼, 섹션 구분)
   - [x] 라우팅 테스트 (홈에서 클릭 시 이동)
@@ -122,6 +129,7 @@
   - [x] 섹션별 구분선 또는 카드
 
 ### 3.2 기본 정보 섹션 (MVP 2.4.1)
+
 - [x] `components/tour-detail/detail-info.tsx` 기본 정보 컴포넌트
   - [x] `detailCommon2` API 연동
   - [x] 관광지명 (대제목)
@@ -134,12 +142,14 @@
   - [x] 정보 없는 항목은 숨김 처리
 
 ### 3.3 지도 섹션 (MVP 2.4.4) - ⏰ 내일 구현 예정
+
 - [ ] `components/tour-detail/detail-map.tsx` 지도 컴포넌트
   - [ ] 해당 관광지 위치 표시 (마커 1개)
   - [ ] "길찾기" 버튼 (네이버 지도 앱/웹 연동)
   - [ ] 좌표 정보 표시 (선택 사항)
 
 ### 3.4 공유 기능 (MVP 2.4.5)
+
 - [x] `components/tour-detail/share-button.tsx` 공유 버튼 컴포넌트
   - [x] URL 복사 기능 (클립보드 API)
   - [x] 복사 완료 토스트 메시지
@@ -152,6 +162,7 @@
   - [x] `og:type` "website"
 
 ### 3.5 추가 정보 섹션
+
 - [x] `components/tour-detail/detail-intro.tsx` 운영 정보 컴포넌트
   - [x] `detailIntro2` API 연동
   - [x] 운영시간 / 개장시간
@@ -171,6 +182,7 @@
   - [x] 접근성 개선 (DialogTitle 추가, 스크린 리더 지원)
 
 ### 3.6 반려동물 정보 섹션 (MVP 2.5)
+
 - [ ] `components/tour-detail/detail-pet-tour.tsx` 반려동물 정보 컴포넌트
   - [ ] `detailPetTour2` API 연동
   - [ ] 반려동물 동반 가능 여부 표시
@@ -214,14 +226,153 @@
   - [ ] 로딩 상태 처리
   - [ ] 에러 처리
 
-## Phase 4: 북마크 페이지 (`/bookmarks`) - 선택 사항
+## Phase 4: 통계 대시보드 페이지 (`/stats`)
 
-### 4.1 Supabase 설정
+- 참고페이지 : https://ui.shadcn.com/docs/components/chart
+
+### 4.1 페이지 기본 구조
+
+- [ ] `app/stats/page.tsx` 통계 대시보드 페이지 생성
+  - [ ] 기본 레이아웃 구조 (헤더, 섹션 구분)
+  - [ ] 반응형 레이아웃 설정 (모바일 우선)
+  - [ ] 단일 컬럼 레이아웃
+  - [ ] 뒤로가기 버튼 또는 네비게이션
+
+### 4.2 타입 정의
+
+- [ ] `lib/types/stats.ts` 통계 타입 정의 파일 생성
+  - [ ] `RegionStats` 인터페이스 정의
+    - [ ] 지역 코드 (areaCode)
+    - [ ] 지역명 (areaName)
+    - [ ] 관광지 개수 (count)
+  - [ ] `TypeStats` 인터페이스 정의
+    - [ ] 타입 코드 (contentTypeId)
+    - [ ] 타입명 (typeName)
+    - [ ] 관광지 개수 (count)
+    - [ ] 비율 (percentage)
+  - [ ] `StatsSummary` 인터페이스 정의
+    - [ ] 전체 관광지 수 (totalCount)
+    - [ ] 상위 3개 지역 (topRegions)
+    - [ ] 상위 3개 타입 (topTypes)
+    - [ ] 마지막 업데이트 시간 (lastUpdated)
+
+### 4.3 통계 데이터 수집 함수
+
+- [ ] `lib/api/stats-api.ts` 통계 API 함수 파일 생성
+  - [ ] `getRegionStats()` 함수 구현
+    - [ ] 모든 지역 코드 조회 (`areaCode2` API)
+    - [ ] 각 지역별 관광지 개수 집계 (`areaBasedList2` API, totalCount 활용)
+    - [ ] RegionStats[] 형태로 반환
+    - [ ] 에러 처리
+  - [ ] `getTypeStats()` 함수 구현
+    - [ ] 각 타입별 관광지 개수 집계 (`areaBasedList2` API, totalCount 활용)
+    - [ ] 타입 코드: 12, 14, 15, 25, 28, 32, 38, 39
+    - [ ] 비율 계산 (각 타입 개수 / 전체 개수 \* 100)
+    - [ ] TypeStats[] 형태로 반환
+    - [ ] 에러 처리
+  - [ ] `getStatsSummary()` 함수 구현
+    - [ ] getRegionStats()와 getTypeStats() 병렬 호출
+    - [ ] 전체 관광지 수 계산
+    - [ ] Top 3 지역 추출 (개수 기준 정렬)
+    - [ ] Top 3 타입 추출 (개수 기준 정렬)
+    - [ ] 현재 시간을 lastUpdated로 설정
+    - [ ] StatsSummary 형태로 반환
+    - [ ] 에러 처리
+
+### 4.4 통계 요약 카드
+
+- [ ] `components/stats/stats-summary.tsx` 통계 요약 카드 컴포넌트 생성
+  - [ ] StatsSummary 타입 props 받기
+  - [ ] 전체 관광지 수 표시 (큰 숫자로 강조)
+  - [ ] Top 3 지역 표시 (지역명 + 개수)
+  - [ ] Top 3 타입 표시 (타입명 + 개수)
+  - [ ] 마지막 업데이트 시간 표시 (상대 시간 표시)
+  - [ ] 카드 레이아웃 디자인 (그리드 또는 플렉스)
+  - [ ] 로딩 상태 처리 (Skeleton UI)
+  - [ ] 아이콘 추가 (lucide-react 사용)
+  - [ ] 반응형 디자인
+
+### 4.5 지역별 분포 차트 (Bar Chart)
+
+- [ ] shadcn/ui Chart 컴포넌트 설치
+  - [ ] `pnpx shadcn@latest add chart` 실행
+- [ ] `components/stats/region-chart.tsx` 지역별 분포 차트 컴포넌트 생성
+  - [ ] RegionStats[] 타입 props 받기
+  - [ ] recharts 기반 Bar Chart 구현
+    - [ ] X축: 지역명 (areaName)
+    - [ ] Y축: 관광지 개수 (count)
+    - [ ] 상위 10개 지역만 표시 (또는 전체)
+  - [ ] 바 클릭 핸들러 구현
+    - [ ] 클릭 시 해당 지역의 관광지 목록 페이지로 이동 (`/?areaCode={code}`)
+  - [ ] 호버 시 툴팁 표시 (지역명 + 정확한 개수)
+  - [ ] 다크/라이트 모드 지원 (shadcn 테마 활용)
+  - [ ] 반응형 디자인 (모바일/태블릿/데스크톱)
+  - [ ] 로딩 상태 처리
+  - [ ] 접근성
+    - [ ] ARIA 라벨 추가
+    - [ ] 키보드 네비게이션 지원
+    - [ ] 스크린 리더 지원
+  - [ ] 차트 제목 및 설명 추가
+
+### 4.6 타입별 분포 차트 (Donut Chart)
+
+- [ ] `components/stats/type-chart.tsx` 타입별 분포 차트 컴포넌트 생성
+  - [ ] TypeStats[] 타입 props 받기
+  - [ ] recharts 기반 Donut Chart 구현
+    - [ ] 타입별 비율 및 개수 표시
+    - [ ] 각 섹션에 타입명 라벨
+    - [ ] 중앙에 전체 개수 표시 (선택 사항)
+  - [ ] 섹션 클릭 핸들러 구현
+    - [ ] 클릭 시 해당 타입의 관광지 목록 페이지로 이동 (`/?contentTypeId={id}`)
+  - [ ] 호버 시 툴팁 표시 (타입명 + 개수 + 비율)
+  - [ ] 범례 표시 (타입명 + 개수 + 비율)
+  - [ ] 다크/라이트 모드 지원 (shadcn 테마 활용)
+  - [ ] 반응형 디자인 (모바일/태블릿/데스크톱)
+  - [ ] 로딩 상태 처리
+  - [ ] 접근성
+    - [ ] ARIA 라벨 추가
+    - [ ] 스크린 리더 지원
+  - [ ] 차트 제목 및 설명 추가
+
+### 4.7 페이지 통합 및 최적화
+
+- [ ] `app/stats/page.tsx`에 모든 컴포넌트 통합
+  - [ ] getStatsSummary() 호출하여 데이터 가져오기
+  - [ ] 통계 요약 카드 배치 (상단)
+  - [ ] 지역별 분포 차트 배치 (중단)
+  - [ ] 타입별 분포 차트 배치 (하단)
+  - [ ] 섹션별 구분선 또는 간격 설정
+- [ ] Server Component로 구현
+- [ ] Next.js 데이터 캐싱 설정
+  - [ ] `export const revalidate = 3600` (1시간마다 재검증)
+- [ ] 에러 처리
+  - [ ] API 에러 시 에러 메시지 표시
+  - [ ] 재시도 버튼 제공
+  - [ ] 에러 바운더리 추가 (선택 사항)
+- [ ] 네비게이션에 통계 페이지 링크 추가
+  - [ ] `components/navbar.tsx` 또는 헤더에 "통계" 메뉴 추가
+  - [ ] 아이콘 추가 (BarChart3 또는 PieChart)
+- [ ] 메타데이터 설정
+  - [ ] 페이지 제목 설정 (예: "통계 - My Trip")
+  - [ ] 페이지 설명 설정
+  - [ ] Open Graph 메타태그 (선택 사항)
+- [ ] 최종 페이지 확인
+  - [ ] 모바일 반응형 확인
+  - [ ] 다크/라이트 모드 확인
+  - [ ] 차트 인터랙션 테스트 (클릭, 호버)
+  - [ ] 로딩 상태 확인
+  - [ ] 에러 처리 확인
+
+## Phase 5: 북마크 페이지 (`/bookmarks`) - 선택 사항
+
+### 5.1 Supabase 설정
+
 - [x] `supabase/migrations/mytrip_schema.sql` 마이그레이션 파일 (이미 완료)
   - [x] `bookmarks` 테이블 생성
   - [x] RLS 비활성화 (개발 환경)
 
-### 4.2 북마크 기능 구현
+### 5.2 북마크 기능 구현
+
 - [ ] `components/bookmarks/bookmark-button.tsx` 북마크 버튼 컴포넌트
   - [ ] 별 아이콘 (채워짐/비어있음)
   - [ ] 북마크 추가/제거 기능
@@ -232,7 +383,8 @@
   - [ ] `app/places/[contentId]/page.tsx`에 북마크 버튼 통합
   - [ ] 북마크 상태 확인 및 표시
 
-### 4.3 북마크 목록 페이지
+### 5.3 북마크 목록 페이지
+
 - [ ] `app/bookmarks/page.tsx` 북마크 목록 페이지
   - [ ] 인증된 사용자만 접근 가능
 - [ ] `components/bookmarks/bookmark-list.tsx` 북마크 목록 컴포넌트
@@ -241,7 +393,7 @@
   - [ ] 정렬 옵션 (최신순, 이름순, 지역별)
   - [ ] 일괄 삭제 기능
 
-## Phase 5: 최적화 & 배포
+## Phase 6: 최적화 & 배포
 
 - [ ] 이미지 최적화
   - [x] `next.config.ts` 기본 설정 (존재)
@@ -256,6 +408,15 @@
   - [ ] `app/sitemap.ts` 사이트맵 생성
   - [ ] `app/robots.ts` robots.txt 설정
   - [ ] 메타태그 최적화
+    - [ ] 홈페이지 Open Graph 메타태그 추가
+      - [ ] `app/layout.tsx` 메타데이터 개선
+      - [ ] `og:title` 사이트명 (예: "My Trip - 한국 관광지 탐험")
+      - [ ] `og:description` 사이트 설명 (예: "한국의 다양한 관광지를 탐색하고 여행을 계획해보세요")
+      - [ ] `og:image` 기본 OG 이미지 (`/og-image.png` 사용)
+      - [ ] `og:url` 홈페이지 절대 URL
+      - [ ] `og:type` "website"
+    - [ ] 환경변수 설정
+      - [ ] `NEXT_PUBLIC_SITE_URL` 환경변수 추가 (배포 URL)
 - [ ] 성능 측정
   - [ ] Lighthouse 점수 > 80
   - [ ] 페이지 로딩 시간 < 3초

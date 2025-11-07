@@ -367,6 +367,113 @@ interface PetTourInfo {
 
 ---
 
+### 2.6 통계 대시보드
+
+#### 기능 설명
+
+관광지 데이터를 차트로 시각화하여 사용자가 한눈에 전국 관광지 현황을 파악할 수 있는 통계 페이지 제공
+
+#### 상세 요구사항
+
+##### 2.6.1 지역별 관광지 분포 (Bar Chart)
+
+- **표시 데이터**
+
+  - 각 시/도별 관광지 개수
+  - X축: 지역명 (서울, 부산, 제주 등)
+  - Y축: 관광지 개수
+  - 상위 10개 지역 표시 (또는 전체 지역)
+
+- **인터랙션**
+
+  - 바 클릭 시 해당 지역의 관광지 목록 페이지로 이동
+  - 호버 시 정확한 개수 표시
+
+- **데이터 수집**
+  - `areaBasedList2` API로 각 지역별 관광지 수 집계
+  - 지역 코드별로 API 호출하여 총 개수 파악 (totalCount 활용)
+
+##### 2.6.2 관광 타입별 분포 (Pie Chart / Donut Chart)
+
+- **표시 데이터**
+
+  - 관광지(12), 문화시설(14), 축제/행사(15), 여행코스(25), 레포츠(28), 숙박(32), 쇼핑(38), 음식점(39)
+  - 각 타입별 비율 (백분율)
+  - 각 타입별 개수
+
+- **인터랙션**
+
+  - 섹션 클릭 시 해당 타입의 관광지 목록 페이지로 이동
+  - 호버 시 타입명, 개수, 비율 표시
+
+- **데이터 수집**
+  - `areaBasedList2` API로 각 타입별 관광지 수 집계
+  - contentTypeId별로 API 호출하여 총 개수 파악 (totalCount 활용)
+
+##### 2.6.3 통계 요약 카드
+
+- **표시 정보**
+  - 전체 관광지 수
+  - 가장 많은 관광지가 있는 지역 (Top 3)
+  - 가장 많은 관광 타입 (Top 3)
+  - 마지막 업데이트 시간
+
+#### 사용 API
+
+- `areaBasedList2`: 지역별/타입별 관광지 개수 집계
+- `areaCode2`: 지역 코드 및 지역명 조회
+
+#### URL 구조
+
+```
+/stats
+```
+
+#### UI 요구사항
+
+- **레이아웃**
+
+  - 단일 컬럼 레이아웃 (모바일 우선)
+  - 상단: 통계 요약 카드 (전체 개수, Top 3 등)
+  - 중단: 지역별 분포 차트 (Bar Chart)
+  - 하단: 관광 타입별 분포 차트 (Donut Chart)
+
+- **차트 라이브러리**
+
+  - shadcn/ui의 Chart 컴포넌트 사용 (recharts 기반)
+  - 다크/라이트 모드 지원
+  - 반응형 디자인 (모바일/태블릿/데스크톱)
+
+- **로딩 상태**
+
+  - 차트 로딩 중 스켈레톤 UI 표시
+  - 각 차트별 독립적인 로딩 상태
+
+- **에러 처리**
+  - API 에러 시 에러 메시지 표시
+  - 재시도 버튼 제공
+
+#### 기술 요구사항
+
+- **데이터 캐싱**
+
+  - 통계 데이터는 변동이 적으므로 캐싱 적용
+  - Next.js의 데이터 캐싱 활용 (revalidate 설정)
+  - 1시간마다 재검증 (revalidate: 3600)
+
+- **성능 최적화**
+
+  - Server Component로 구현하여 초기 로딩 속도 최적화
+  - API 호출 최소화 (병렬 처리)
+  - 차트 렌더링 최적화
+
+- **접근성**
+  - 차트 데이터를 테이블 형태로도 제공 (스크린 리더 지원)
+  - ARIA 라벨 적용
+  - 키보드 네비게이션 지원
+
+---
+
 ## 3. 기술 스택
 
 ### 3.1 Frontend
@@ -503,6 +610,7 @@ interface TourIntro {
 ```
 /                          # 홈페이지 (관광지 목록)
 /places/[contentId]        # 상세페이지
+/stats                     # 통계 대시보드 (차트 시각화)
 /search?keyword=xxx        # 검색 결과 (선택 사항, 홈에서 처리 가능)
 /bookmarks                 # 내 북마크 목록 (선택 사항)
 ```
@@ -515,6 +623,8 @@ app/
 ├── places/
 │   └── [contentId]/
 │       └── page.tsx            # 상세페이지
+├── stats/
+│   └── page.tsx                # 통계 대시보드
 └── bookmarks/
     └── page.tsx                # 북마크 목록 (선택 사항)
 
@@ -531,6 +641,10 @@ components/
 │   ├── detail-map.tsx          # 지도
 │   ├── detail-pet-tour.tsx     # 반려동물 정보 (MVP 2.5)
 │   └── share-button.tsx        # URL 복사 공유 버튼
+├── stats/
+│   ├── stats-summary.tsx       # 통계 요약 카드
+│   ├── region-chart.tsx        # 지역별 분포 차트 (Bar Chart)
+│   └── type-chart.tsx          # 타입별 분포 차트 (Donut Chart)
 ├── bookmarks/
 │   ├── bookmark-button.tsx     # 북마크 버튼 (별 아이콘)
 │   └── bookmark-list.tsx       # 북마크 목록
@@ -539,9 +653,11 @@ components/
 lib/
 ├── api/
 │   ├── tour-api.ts             # 한국관광공사 API 호출 함수들
+│   ├── stats-api.ts            # 통계 데이터 집계 함수들
 │   └── supabase-api.ts         # Supabase 쿼리 함수들 (북마크)
 └── types/
-    └── tour.ts                 # 관광지 타입 정의
+    ├── tour.ts                 # 관광지 타입 정의
+    └── stats.ts                # 통계 타입 정의
 ```
 
 ---
@@ -648,16 +764,19 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 ### Phase 2: 홈페이지 (`/`) - 관광지 목록
 
 #### 2.1 페이지 기본 구조
+
 - [ ] `app/page.tsx` 생성 (빈 레이아웃)
 - [ ] 기본 UI 구조 확인 (헤더, 메인 영역, 푸터)
 
 #### 2.2 관광지 목록 기능 (MVP 2.1)
+
 - [ ] `components/tour-card.tsx` (관광지 카드 - 기본 정보만)
 - [ ] `components/tour-list.tsx` (목록 표시 - 하드코딩 데이터로 테스트)
 - [ ] API 연동하여 실제 데이터 표시
 - [ ] 페이지 확인 및 스타일링 조정
 
 #### 2.3 필터 기능 추가
+
 - [ ] `components/tour-filters.tsx` (지역/타입 필터 UI)
 - [ ] 필터 동작 연결 (상태 관리)
 - [ ] 필터링된 결과 표시
@@ -665,6 +784,7 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [ ] 페이지 확인 및 UX 개선
 
 #### 2.4 검색 기능 추가 (MVP 2.3)
+
 - [ ] `components/tour-search.tsx` (검색창 UI)
 - [ ] 검색 API 연동 (`searchKeyword2`)
 - [ ] 검색 결과 표시
@@ -672,6 +792,7 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [ ] 페이지 확인 및 UX 개선
 
 #### 2.5 지도 연동 (MVP 2.2)
+
 - [ ] `components/naver-map.tsx` (기본 지도 표시)
 - [ ] 관광지 마커 표시
 - [ ] 마커 클릭 시 인포윈도우
@@ -680,6 +801,7 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [ ] 페이지 확인 및 인터랙션 테스트
 
 #### 2.6 정렬 & 페이지네이션
+
 - [ ] 정렬 옵션 추가 (최신순, 이름순)
 - [ ] 페이지네이션 또는 무한 스크롤
 - [ ] 로딩 상태 개선 (Skeleton UI)
@@ -688,11 +810,13 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 ### Phase 3: 상세페이지 (`/places/[contentId]`)
 
 #### 3.1 페이지 기본 구조
+
 - [ ] `app/places/[contentId]/page.tsx` 생성
 - [ ] 기본 레이아웃 구조 (뒤로가기 버튼, 섹션 구분)
 - [ ] 라우팅 테스트 (홈에서 클릭 시 이동)
 
 #### 3.2 기본 정보 섹션 (MVP 2.4.1)
+
 - [ ] `components/tour-detail/detail-info.tsx`
 - [ ] `detailCommon2` API 연동
 - [ ] 관광지명, 이미지, 주소, 전화번호, 홈페이지, 개요 표시
@@ -701,12 +825,14 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [ ] 페이지 확인 및 스타일링
 
 #### 3.3 지도 섹션 (MVP 2.4.4)
+
 - [ ] `components/tour-detail/detail-map.tsx`
 - [ ] 해당 관광지 위치 표시 (마커 1개)
 - [ ] "길찾기" 버튼 (네이버 지도 연동)
 - [ ] 페이지 확인
 
 #### 3.4 공유 기능 (MVP 2.4.5)
+
 - [ ] `components/tour-detail/share-button.tsx`
 - [ ] URL 복사 기능 (클립보드 API)
 - [ ] 복사 완료 토스트 메시지
@@ -714,13 +840,15 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [ ] 페이지 확인 및 공유 테스트
 
 #### 3.5 추가 정보 섹션 (향후 구현)
+
 - [ ] `components/tour-detail/detail-intro.tsx` (운영 정보)
 - [ ] `detailIntro2` API 연동
 - [ ] `components/tour-detail/detail-gallery.tsx` (이미지 갤러리)
 - [ ] `detailImage2` API 연동
 - [ ] 페이지 확인
 
-#### 3.6 반려동물 정보 섹션 (MVP 2.5)
+#### 3.6 반려동물 정보 섹션 (추가 구현)
+
 - [ ] `components/tour-detail/detail-pet-tour.tsx` (반려동물 정보)
 - [ ] `detailPetTour2` API 연동
 - [ ] 반려동물 동반 가능 여부 표시
@@ -729,14 +857,88 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [ ] 아이콘 및 뱃지 디자인
 - [ ] 페이지 확인
 
-### Phase 4: 북마크 페이지 (`/bookmarks`) - 선택 사항
+### Phase 4: 통계 대시보드 페이지 (`/stats`)
 
-#### 4.1 Supabase 설정
+#### 4.1 페이지 기본 구조
+
+- [ ] `app/stats/page.tsx` 생성
+- [ ] 기본 레이아웃 구조 (헤더, 섹션 구분)
+- [ ] 반응형 레이아웃 설정 (모바일 우선)
+
+#### 4.2 타입 정의
+
+- [ ] `lib/types/stats.ts` 생성
+  - [ ] RegionStats 인터페이스 (지역별 통계)
+  - [ ] TypeStats 인터페이스 (타입별 통계)
+  - [ ] StatsSummary 인터페이스 (통계 요약)
+
+#### 4.3 통계 데이터 수집
+
+- [ ] `lib/api/stats-api.ts` 생성
+  - [ ] getRegionStats() - 지역별 관광지 개수 집계
+  - [ ] getTypeStats() - 타입별 관광지 개수 집계
+  - [ ] getStatsSummary() - 전체 통계 요약
+  - [ ] 병렬 API 호출로 성능 최적화
+  - [ ] 에러 처리 및 재시도 로직
+
+#### 4.4 통계 요약 카드
+
+- [ ] `components/stats/stats-summary.tsx` 생성
+  - [ ] 전체 관광지 수 표시
+  - [ ] Top 3 지역 표시
+  - [ ] Top 3 타입 표시
+  - [ ] 마지막 업데이트 시간 표시
+  - [ ] 카드 레이아웃 디자인
+  - [ ] 로딩 상태 (Skeleton UI)
+
+#### 4.5 지역별 분포 차트 (Bar Chart)
+
+- [ ] `components/stats/region-chart.tsx` 생성
+  - [ ] shadcn/ui Chart 컴포넌트 설치 (Bar)
+  - [ ] recharts 기반 Bar Chart 구현
+  - [ ] X축: 지역명, Y축: 관광지 개수
+  - [ ] 바 클릭 시 해당 지역 목록 페이지로 이동
+  - [ ] 호버 시 정확한 개수 표시
+  - [ ] 다크/라이트 모드 지원
+  - [ ] 반응형 디자인
+  - [ ] 로딩 상태
+  - [ ] 접근성 (ARIA 라벨, 키보드 네비게이션)
+
+#### 4.6 타입별 분포 차트 (Donut Chart)
+
+- [ ] `components/stats/type-chart.tsx` 생성
+  - [ ] shadcn/ui Chart 컴포넌트 설치 (Pie/Donut)
+  - [ ] recharts 기반 Donut Chart 구현
+  - [ ] 타입별 비율 및 개수 표시
+  - [ ] 섹션 클릭 시 해당 타입 목록 페이지로 이동
+  - [ ] 호버 시 타입명, 개수, 비율 표시
+  - [ ] 다크/라이트 모드 지원
+  - [ ] 반응형 디자인
+  - [ ] 로딩 상태
+  - [ ] 접근성 (ARIA 라벨)
+
+#### 4.7 페이지 통합 및 최적화
+
+- [ ] `app/stats/page.tsx`에 모든 컴포넌트 통합
+  - [ ] 통계 요약 카드 (상단)
+  - [ ] 지역별 분포 차트 (중단)
+  - [ ] 타입별 분포 차트 (하단)
+- [ ] Server Component로 구현
+- [ ] 데이터 캐싱 설정 (revalidate: 3600)
+- [ ] 에러 처리 (에러 메시지 + 재시도 버튼)
+- [ ] 네비게이션에 통계 페이지 링크 추가
+- [ ] 최종 페이지 확인
+
+### Phase 5: 북마크 페이지 (`/bookmarks`) - 선택 사항
+
+#### 5.1 Supabase 설정
+
 - [ ] `supabase/migrations/` 마이그레이션 파일
 - [ ] `bookmarks` 테이블 생성
-- [ ] RLS 정책 설정
+- [ ] RLS 정책 비활성화 설정
 
-#### 4.2 북마크 기능 구현
+#### 5.2 북마크 기능 구현
+
 - [ ] `components/bookmarks/bookmark-button.tsx`
 - [ ] 상세페이지에 북마크 버튼 추가
 - [ ] Supabase DB 연동
@@ -744,7 +946,8 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [ ] 로그인하지 않은 경우 localStorage 임시 저장
 - [ ] 상세페이지에서 북마크 동작 확인
 
-#### 4.3 북마크 목록 페이지
+#### 5.3 북마크 목록 페이지
+
 - [ ] `app/bookmarks/page.tsx` 생성
 - [ ] `components/bookmarks/bookmark-list.tsx`
 - [ ] 북마크한 관광지 목록 표시
@@ -752,7 +955,7 @@ NEXT_PUBLIC_STORAGE_BUCKET=uploads
 - [ ] 일괄 삭제 기능
 - [ ] 페이지 확인
 
-### Phase 5: 최적화 & 배포
+### Phase 6: 최적화 & 배포
 
 - [ ] 이미지 최적화 (`next.config.ts` 외부 도메인 설정)
 - [ ] 전역 에러 핸들링 개선
