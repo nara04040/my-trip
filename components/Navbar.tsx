@@ -20,7 +20,7 @@ import Link from "next/link";
 import React, { Suspense } from "react";
 import { Button } from "@/components/ui/button";
 import { TourSearch } from "@/components/tour-search";
-import { Bookmark } from "lucide-react";
+import { Bookmark, BarChart3 } from "lucide-react";
 
 const Navbar = () => {
   return (
@@ -38,8 +38,16 @@ const Navbar = () => {
           </Suspense>
         </div>
 
-        {/* 로그인/회원가입 및 북마크 */}
+        {/* 로그인/회원가입 및 북마크, 통계 */}
         <div className="flex gap-2 items-center shrink-0">
+          {/* 통계 링크 (모든 사용자에게 표시) */}
+          <Link href="/stats">
+            <Button variant="ghost" size="sm" className="gap-2" aria-label="통계 대시보드">
+              <BarChart3 className="h-4 w-4" />
+              <span className="hidden sm:inline">통계</span>
+            </Button>
+          </Link>
+          
           <SignedOut>
             <SignInButton mode="modal">
               <Button variant="outline" size="sm">
