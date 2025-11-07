@@ -149,12 +149,26 @@
   - [x] 관광 타입 및 카테고리
   - [x] 정보 없는 항목은 숨김 처리
 
-### 3.3 지도 섹션 (MVP 2.4.4) - ⏰ 내일 구현 예정
+### 3.3 지도 섹션 (MVP 2.4.4)
 
-- [ ] `components/tour-detail/detail-map.tsx` 지도 컴포넌트
-  - [ ] 해당 관광지 위치 표시 (마커 1개)
-  - [ ] "길찾기" 버튼 (네이버 지도 앱/웹 연동)
-  - [ ] 좌표 정보 표시 (선택 사항)
+- [x] `components/tour-detail/detail-map.tsx` 지도 컴포넌트
+  - [x] 해당 관광지 위치 표시 (마커 1개)
+  - [x] "길찾기" 버튼 (네이버 지도 앱/웹 연동)
+  - [x] 좌표 정보 표시 및 복사 기능
+  - [x] 주소 표시 및 복사 기능
+  - [x] 관광 타입별 마커 아이콘 적용
+  - [x] 지도 API 스크립트 동적 로드
+  - [x] 에러 처리 (좌표 없음, API 로드 실패)
+- [x] `components/tour-detail/coordinates-copy-button.tsx` 좌표 복사 버튼 컴포넌트
+  - [x] 위도/경도 복사 기능
+  - [x] 복사 완료 피드백 UI
+- [x] `components/tour-detail/detail-map-wrapper.tsx` 지도 래퍼 컴포넌트
+  - [x] Server Component에서 사용하기 위한 Client Component 래퍼
+  - [x] dynamic import로 SSR 비활성화
+  - [x] 로딩 상태 표시
+- [x] 상세페이지에 지도 컴포넌트 통합
+  - [x] `app/places/[contentId]/page.tsx`에 DetailMapWrapper 컴포넌트 추가
+  - [x] 지도 섹션 배치 (이미지 갤러리 다음)
 
 ### 3.4 공유 기능 (MVP 2.4.5)
 

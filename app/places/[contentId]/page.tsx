@@ -7,7 +7,10 @@
  *
  * 주요 기능:
  * 1. 관광지 기본 정보 표시 (3.2 완료)
- * 2. 지도 섹션 (3.3에서 구현 예정)
+ * 2. 지도 섹션 (3.3 완료)
+ *    - 네이버 지도에 단일 마커 표시
+ *    - 길찾기 버튼 (네이버 지도 앱/웹 연동)
+ *    - 좌표 복사 기능
  * 3. 공유 기능 (3.4 완료)
  *    - URL 복사 기능
  *    - Open Graph 메타태그 동적 생성
@@ -35,6 +38,7 @@ import { Button } from "@/components/ui/button";
 import { DetailInfo } from "@/components/tour-detail/detail-info";
 import { DetailIntro } from "@/components/tour-detail/detail-intro";
 import { DetailGallery } from "@/components/tour-detail/detail-gallery";
+import { DetailMapWrapper } from "@/components/tour-detail/detail-map-wrapper";
 import { ShareButton } from "@/components/tour-detail/share-button";
 
 interface PlaceDetailPageProps {
@@ -247,16 +251,9 @@ export default async function PlaceDetailPage({
       {/* 이미지 갤러리 섹션 */}
       <DetailGallery images={tourImages} title={tourDetail.title} />
 
-      {/* 추가 섹션들 (3.3 지도에서 구현 예정) */}
+      {/* 지도 섹션 */}
       <hr className="my-8 border-border" />
-      <section className="mb-8">
-        <div className="rounded-lg border bg-card p-6 shadow-sm">
-          <h2 className="text-2xl font-semibold mb-4">추가 정보</h2>
-          <p className="text-muted-foreground">
-            지도 기능은 향후 구현 예정입니다.
-          </p>
-        </div>
-      </section>
+      <DetailMapWrapper tour={tourDetail} />
     </main>
   );
 }
