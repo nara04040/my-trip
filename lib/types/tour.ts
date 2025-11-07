@@ -10,6 +10,7 @@
  * - TourDetail: 관광지 상세 정보 (detailCommon2) 응답
  * - TourIntro: 관광지 소개 정보 (detailIntro2) 응답
  * - AreaCode: 지역코드 조회 (areaCode2) 응답
+ * - PetTourInfo: 반려동물 동반 여행 정보 (detailPetTour2) 응답
  *
  * @see {@link /docs/PRD.md} - 프로젝트 요구사항 문서
  */
@@ -251,4 +252,144 @@ export interface TourListResponse {
   items: TourItem[];
   /** 전체 개수 */
   totalCount: number;
+}
+
+/**
+ * 반려동물 크기 타입
+ * 소형견, 중형견, 대형견, 전체 가능
+ */
+export type PetSize = "small" | "medium" | "large" | "all";
+
+/**
+ * 반려동물 크기 한글 이름 매핑
+ */
+export const PET_SIZE_NAMES: Record<PetSize, string> = {
+  small: "소형견",
+  medium: "중형견",
+  large: "대형견",
+  all: "전체",
+} as const;
+
+/**
+ * 반려동물 입장 가능 장소 타입
+ * 실내, 실외, 전체 가능
+ */
+export type PetPlace = "indoor" | "outdoor" | "all";
+
+/**
+ * 반려동물 입장 가능 장소 한글 이름 매핑
+ */
+export const PET_PLACE_NAMES: Record<PetPlace, string> = {
+  indoor: "실내",
+  outdoor: "실외",
+  all: "전체",
+} as const;
+
+/**
+ * 반려동물 동반 여행 정보 응답 타입 (detailPetTour2)
+ *
+ * 한국관광공사 API의 detailPetTour2 엔드포인트에서 반환하는
+ * 반려동물 동반 여행 관련 상세 정보를 담는 타입입니다.
+ *
+ * 주요 정보:
+ * - 반려동물 동반 가능 여부
+ * - 반려동물 크기 제한 (소형견, 중형견, 대형견)
+ * - 입장 가능 장소 (실내, 실외)
+ * - 추가 요금 정보
+ * - 주차장 및 시설 정보
+ * - 기타 주의사항 및 안내
+ *
+ * @example
+ * ```typescript
+ * const petInfo: PetTourInfo = {
+ *   contentid: "125266",
+ *   contenttypeid: "12",
+ *   chkpetleash: "가능",
+ *   chkpetsize: "소형견, 중형견",
+ *   chkpetplace: "실외",
+ *   chkpetfee: "무료",
+ *   petinfo: "목줄 착용 필수",
+ *   parking: "반려동물 하차 공간 있음"
+ * };
+ * ```
+ *
+ * @see {@link /docs/PRD.md#2.5-반려동물-동반-여행} - 반려동물 기능 요구사항
+ */
+export interface PetTourInfo {
+  /** 콘텐츠ID */
+  contentid: string;
+  /** 콘텐츠타입ID */
+  contenttypeid: string;
+  /**
+   * 사고 위험 완화 조치
+   */
+  relaAcdntRiskMtr?: string;
+  /**
+   * 동반 가능 타입 코드
+   * 예: "전구역 동반가능", "일부구역 동반가능", "동반불가"
+   */
+  acmpyTypeCd?: string;
+  /**
+   * 관련 소지 시설
+   */
+  relaPosesFclty?: string;
+  /**
+   * 관련 비치 물품 목록
+   */
+  relaFrnshPrdlst?: string;
+  /**
+   * 기타 동반 정보
+   * 추가 안내 사항 (맹견 입마개 착용 필수, 배변봉투 지참 등)
+   */
+  etcAcmpyInfo?: string;
+  /**
+   * 관련 구매 물품 목록
+   */
+  relaPurcPrdlst?: string;
+  /**
+   * 동반 가능 반려동물
+   * 예: "전 견종 동반 가능", "소형견만 가능" 등
+   */
+  acmpyPsblCpam?: string;
+  /**
+   * 관련 대여 물품 목록
+   */
+  relaRntlPrdlst?: string;
+  /**
+   * 동반 필요 사항
+   * 예: "목줄 착용", "입마개 착용 필수" 등
+   */
+  acmpyNeedMtr?: string;
+  /**
+   * 애완동물 동반 여부 (레거시 필드)
+   * 예: "가능", "불가능", "제한적", "가능 (목줄 필수)"
+   */
+  chkpetleash?: string;
+  /**
+   * 애완동물 크기 제한 (레거시 필드)
+   * 예: "소형견", "중형견", "대형견", "소형견, 중형견", "전체"
+   */
+  chkpetsize?: string;
+  /**
+   * 입장 가능 장소 (레거시 필드)
+   * 예: "실내", "실외", "실내, 실외", "전체"
+   */
+  chkpetplace?: string;
+  /**
+   * 추가 요금 정보 (레거시 필드)
+   * 예: "무료", "5,000원", "입장료와 동일", "별도 요금 있음"
+   */
+  chkpetfee?: string;
+  /**
+   * 기타 반려동물 정보 (레거시 필드)
+   * 목줄 착용 의무, 주의사항, 문의처 등 상세 안내
+   * 예: "목줄 착용 필수", "배변 봉투 지참", "문의: 02-1234-5678"
+   */
+  petinfo?: string;
+  /**
+   * 주차장 정보 (레거시 필드)
+   * 반려동물 하차 공간, 산책로, 배변 봉투 제공 여부, 음수대 위치 등
+   * 예: "반려동물 하차 공간 있음", "산책로 있음", "배변 봉투 제공"
+   */
+  parking?: string;
 }

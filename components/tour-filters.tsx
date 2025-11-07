@@ -8,8 +8,10 @@
  * 주요 기능:
  * 1. 지역 필터 (시/도 단위, "전체" 옵션 포함)
  * 2. 관광 타입 필터 (12, 14, 15, 25, 28, 32, 38, 39, "전체")
- * 3. URL searchParams 기반 상태 관리
- * 4. 반응형 디자인 (데스크톱: 수평 배치, 모바일: 가로 스크롤)
+ * 3. 정렬 필터 (최신순, 이름순)
+ * 4. 반려동물 동반 가능 필터 (토글 버튼)
+ * 5. URL searchParams 기반 상태 관리
+ * 6. 반응형 디자인 (데스크톱: 수평 배치, 모바일: 가로 스크롤)
  *
  * @see {@link /docs/PRD.md} - 프로젝트 요구사항 문서
  * @see {@link /docs/reference/design/DESIGN.md} - 디자인 가이드
@@ -18,7 +20,7 @@
 "use client";
 
 import { useRouter, useSearchParams } from "next/navigation";
-import { MapPin, Tag, ArrowUpDown } from "lucide-react";
+import { MapPin, Tag, ArrowUpDown, Dog } from "lucide-react";
 import {
   Select,
   SelectContent,
@@ -26,6 +28,7 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
+import { Button } from "@/components/ui/button";
 import type { AreaCode, ContentTypeId, SortOption } from "@/lib/types/tour";
 import { CONTENT_TYPE, CONTENT_TYPE_NAMES, SORT_OPTION_NAMES } from "@/lib/types/tour";
 import { cn } from "@/lib/utils";
@@ -55,6 +58,7 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
   const contentTypeIdParam = searchParams.get("contentTypeId");
   const currentContentTypeId = contentTypeIdParam || undefined;
   const currentSort = (searchParams.get("sort") as SortOption) || "latest";
+  const currentPet = searchParams.get("pet") === "true";
 
   /**
    * 필터 변경 핸들러
@@ -85,6 +89,12 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
     const sort = searchParams.get("sort");
     if (sort) {
       params.set("sort", sort);
+    }
+    
+    // pet 필터 유지
+    const pet = searchParams.get("pet");
+    if (pet === "true") {
+      params.set("pet", "true");
     }
     
     // pageNo는 필터 변경 시 1로 리셋
@@ -120,6 +130,12 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
       params.set("sort", sort);
     }
     
+    // pet 필터 유지
+    const pet = searchParams.get("pet");
+    if (pet === "true") {
+      params.set("pet", "true");
+    }
+    
     // pageNo는 필터 변경 시 1로 리셋
     params.delete("pageNo");
     
@@ -151,7 +167,54 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
       params.set("keyword", keyword);
     }
     
+    // pet 필터 유지
+    const pet = searchParams.get("pet");
+    if (pet === "true") {
+      params.set("pet", "true");
+    }
+    
     // pageNo는 정렬 변경 시 1로 리셋
+    params.delete("pageNo");
+    
+    router.push(`/?${params.toString()}`);
+  };
+
+  /**
+   * 반려동물 필터 변경 핸들러
+   * 반려동물 동반 가능 필터를 토글합니다.
+   */
+  const handlePetFilterChange = () => {
+    const params = new URLSearchParams(searchParams.toString());
+    
+    // 현재 상태와 반대로 토글
+    if (currentPet) {
+      params.delete("pet");
+    } else {
+      params.set("pet", "true");
+    }
+    
+    // 기존 필터 파라미터 유지
+    const areaCode = searchParams.get("areaCode");
+    if (areaCode) {
+      params.set("areaCode", areaCode);
+    }
+    
+    const contentTypeId = searchParams.get("contentTypeId");
+    if (contentTypeId) {
+      params.set("contentTypeId", contentTypeId);
+    }
+    
+    const keyword = searchParams.get("keyword");
+    if (keyword) {
+      params.set("keyword", keyword);
+    }
+    
+    const sort = searchParams.get("sort");
+    if (sort) {
+      params.set("sort", sort);
+    }
+    
+    // pageNo는 필터 변경 시 1로 리셋
     params.delete("pageNo");
     
     router.push(`/?${params.toString()}`);
@@ -220,6 +283,25 @@ export function TourFilters({ areaCodes, className }: TourFiltersProps) {
             ))}
           </SelectContent>
         </Select>
+      </div>
+
+      {/* 반려동물 필터 토글 */}
+      <div className="flex items-center gap-2 shrink-0">
+        <Button
+          type="button"
+          variant={currentPet ? "default" : "outline"}
+          size="default"
+          onClick={handlePetFilterChange}
+          className={cn(
+            "gap-2",
+            currentPet && "bg-primary text-primary-foreground"
+          )}
+          aria-pressed={currentPet}
+        >
+          <Dog className="h-4 w-4" />
+          <span className="hidden sm:inline">반려동물 동반 가능</span>
+          <span className="sm:hidden">반려동물</span>
+        </Button>
       </div>
     </div>
   );

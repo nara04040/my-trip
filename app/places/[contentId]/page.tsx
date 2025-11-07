@@ -7,16 +7,18 @@
  *
  * 주요 기능:
  * 1. 관광지 기본 정보 표시 (3.2 완료)
- * 2. 지도 섹션 (3.3 완료)
+ * 2. 반려동물 정보 섹션 (3.6 진행 중)
+ *    - 반려동물 동반 가능 여부 표시
+ * 3. 지도 섹션 (3.3 완료)
  *    - 네이버 지도에 단일 마커 표시
  *    - 길찾기 버튼 (네이버 지도 앱/웹 연동)
  *    - 좌표 복사 기능
- * 3. 공유 기능 (3.4 완료)
+ * 4. 공유 기능 (3.4 완료)
  *    - URL 복사 기능
  *    - Open Graph 메타태그 동적 생성
- * 4. 운영 정보 섹션 (3.5 완료)
+ * 5. 운영 정보 섹션 (3.5 완료)
  *    - 운영시간, 휴무일, 이용요금, 주차, 수용인원, 체험 프로그램, 유모차/반려동물 동반
- * 5. 이미지 갤러리 섹션 (3.5 완료)
+ * 6. 이미지 갤러리 섹션 (3.5 완료)
  *    - 이미지 그리드 레이아웃, 전체화면 모달, 슬라이드 기능
  *
  * @see {@link /docs/PRD.md} - 프로젝트 요구사항 문서
@@ -32,6 +34,7 @@ import {
   getDetailCommon,
   getDetailIntro,
   getDetailImage,
+  getDetailPetTour,
 } from "@/lib/api/tour-api";
 import type { ContentTypeId } from "@/lib/types/tour";
 import { Button } from "@/components/ui/button";
@@ -40,6 +43,7 @@ import { DetailIntro } from "@/components/tour-detail/detail-intro";
 import { DetailGallery } from "@/components/tour-detail/detail-gallery";
 import { DetailMapWrapper } from "@/components/tour-detail/detail-map-wrapper";
 import { ShareButton } from "@/components/tour-detail/share-button";
+import { DetailPetTour } from "@/components/tour-detail/detail-pet-tour";
 
 interface PlaceDetailPageProps {
   params: Promise<{
@@ -221,6 +225,15 @@ export default async function PlaceDetailPage({
     console.error("Failed to fetch tour images:", error);
   }
 
+  // 반려동물 정보 조회
+  let petTourInfo = null;
+  try {
+    petTourInfo = await getDetailPetTour(contentId);
+  } catch (error) {
+    // 반려동물 정보 조회 실패 시에도 페이지는 계속 표시 (반려동물 정보만 표시 안 함)
+    console.error("Failed to fetch pet tour info:", error);
+  }
+
   return (
     <main className="container max-w-4xl py-8 px-4 md:px-6">
       {/* 뒤로가기 버튼 및 공유 버튼 */}
@@ -239,6 +252,18 @@ export default async function PlaceDetailPage({
 
       {/* 섹션 구분선 */}
       <hr className="my-8 border-border" />
+
+      {/* 반려동물 정보 섹션 */}
+      {petTourInfo && 
+       (petTourInfo.acmpyTypeCd?.trim() || 
+        petTourInfo.acmpyPsblCpam?.trim() || 
+        petTourInfo.acmpyNeedMtr?.trim() || 
+        petTourInfo.chkpetleash?.trim()) && (
+        <>
+          <DetailPetTour petTourInfo={petTourInfo} />
+          <hr className="my-8 border-border" />
+        </>
+      )}
 
       {/* 운영 정보 섹션 */}
       {tourIntro && (

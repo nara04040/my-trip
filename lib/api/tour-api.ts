@@ -12,6 +12,7 @@
  * 4. detailCommon2: 공통 정보 조회
  * 5. detailIntro2: 소개 정보 조회
  * 6. detailImage2: 이미지 목록 조회
+ * 7. detailPetTour2: 반려동물 동반 여행 정보 조회
  *
  * @see {@link /docs/PRD.md} - API 명세 문서
  * @see {@link /lib/types/tour.ts} - 타입 정의
@@ -25,6 +26,7 @@ import type {
   AreaCode,
   TourApiResponse,
   ContentTypeId,
+  PetTourInfo,
 } from "@/lib/types/tour";
 
 /**
@@ -496,5 +498,28 @@ export async function getDetailImage(
   }
 
   return normalizeItem(items.item);
+}
+
+/**
+ * 반려동물 동반 여행 정보 조회 (detailPetTour2)
+ * 관광지의 반려동물 동반 관련 상세 정보를 조회합니다.
+ *
+ * @param contentId 콘텐츠ID
+ * @returns 반려동물 동반 여행 정보 (없으면 null)
+ */
+export async function getDetailPetTour(
+  contentId: string
+): Promise<PetTourInfo | null> {
+  const response = await fetchTourApi<PetTourInfo>("/detailPetTour2", {
+    contentId,
+  });
+
+  const items = response.response.body.items;
+  if (!items || !items.item) {
+    return null;
+  }
+
+  const item = normalizeItem(items.item)[0];
+  return item || null;
 }
 
