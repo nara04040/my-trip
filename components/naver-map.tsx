@@ -24,6 +24,8 @@ import {
   calculateCenterCoordinates,
   getTourCoordinates,
 } from "@/lib/utils/coordinates";
+import { getMarkerIconByType } from "@/lib/utils/marker-colors";
+import { MapLegend } from "@/components/map-legend";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 
@@ -45,11 +47,18 @@ declare global {
           position: { lat: number; lng: number };
           map: any;
           title?: string;
+          icon?: {
+            content: string | HTMLElement;
+            size?: { width: number; height: number } | any;
+            anchor?: { x: number; y: number } | any;
+          };
         }) => {
           setMap: (map: any) => void;
           getPosition: () => { lat: number; lng: number };
           addListener?: (event: string, handler: () => void) => void;
         };
+        Size: new (width: number, height: number) => { width: number; height: number };
+        Point: new (x: number, y: number) => { x: number; y: number };
         InfoWindow: new (options: {
           content: string | HTMLElement;
           maxWidth?: number;
@@ -225,6 +234,12 @@ const NaverMap = forwardRef<NaverMapRef, NaverMapProps>(
         const coords = getTourCoordinates(tour);
         if (!coords) return;
 
+        // 관광 타입별 마커 아이콘 생성
+        const iconOptions = getMarkerIconByType(tour.contenttypeid);
+        // 네이버 지도 API의 Size와 Point 객체 생성
+        const iconSize = new maps.Size(iconOptions.size.width, iconOptions.size.height);
+        const iconAnchor = new maps.Point(iconOptions.anchor.x, iconOptions.anchor.y);
+
         // 마커 생성
         const marker = new maps.Marker({
           position: {
@@ -233,6 +248,11 @@ const NaverMap = forwardRef<NaverMapRef, NaverMapProps>(
           },
           map: map,
           title: tour.title,
+          icon: {
+            content: iconOptions.content,
+            size: iconSize,
+            anchor: iconAnchor,
+          },
         });
 
         markersRef.current.push(marker);
@@ -343,14 +363,21 @@ const NaverMap = forwardRef<NaverMapRef, NaverMapProps>(
 
     return (
       <div
-        ref={mapRef}
         className={cn(
-          "w-full",
+          "relative w-full",
           height || "h-[400px] lg:h-[600px]",
           className
         )}
         style={{ minHeight: height || "400px" }}
-      />
+      >
+        {/* 지도 컨테이너 */}
+        <div
+          ref={mapRef}
+          className="w-full h-full"
+        />
+        {/* 범례 컴포넌트 */}
+        <MapLegend />
+      </div>
     );
   }
 );
