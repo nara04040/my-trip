@@ -70,6 +70,22 @@ export function HomeTourView({
     // 이 기능은 TourViewTabs의 onTabChange를 통해 구현 가능
   };
 
+  // TourCard 호버 핸들러 (마커 강조)
+  const handleCardHover = (contentId: string) => {
+    // 데스크톱에서만 동작 (모바일은 호버 이벤트 없음)
+    if (typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches) {
+      mapRef.current?.highlightMarker(contentId);
+    }
+  };
+
+  // TourCard 호버 해제 핸들러 (마커 강조 해제)
+  const handleCardLeave = () => {
+    // 데스크톱에서만 동작
+    if (typeof window !== "undefined" && window.matchMedia("(hover: hover)").matches) {
+      mapRef.current?.unhighlightMarker();
+    }
+  };
+
   // 리스트 컴포넌트 (클릭 이벤트 처리 포함)
   const listContent = error ? (
     <TourList tours={tours} error={error} emptyMessage={emptyMessage} />
@@ -81,6 +97,8 @@ export function HomeTourView({
         <div
           key={tour.contentid}
           onClick={() => handleCardClick(tour.contentid)}
+          onMouseEnter={() => handleCardHover(tour.contentid)}
+          onMouseLeave={handleCardLeave}
           className={cn(
             "cursor-pointer transition-all",
             selectedTourId === tour.contentid && "ring-2 ring-primary rounded-lg"

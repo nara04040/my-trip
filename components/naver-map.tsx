@@ -24,7 +24,10 @@ import {
   calculateCenterCoordinates,
   getTourCoordinates,
 } from "@/lib/utils/coordinates";
-import { getMarkerIconByType } from "@/lib/utils/marker-colors";
+import {
+  getMarkerIconByType,
+  getHighlightedMarkerIconByType,
+} from "@/lib/utils/marker-colors";
 import { MapLegend } from "@/components/map-legend";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -54,6 +57,11 @@ declare global {
           };
         }) => {
           setMap: (map: any) => void;
+          setIcon: (icon: {
+            content: string | HTMLElement;
+            size?: { width: number; height: number } | any;
+            anchor?: { x: number; y: number } | any;
+          }) => void;
           getPosition: () => { lat: number; lng: number };
           addListener?: (event: string, handler: () => void) => void;
         };
@@ -94,6 +102,10 @@ export interface NaverMapRef {
   moveToMarker: (contentId: string) => void;
   /** 지도 중심 좌표 설정 */
   setCenter: (longitude: number, latitude: number) => void;
+  /** 특정 관광지의 마커 강조 */
+  highlightMarker: (contentId: string) => void;
+  /** 강조된 마커 해제 */
+  unhighlightMarker: () => void;
 }
 
 /**
@@ -122,6 +134,12 @@ const NaverMap = forwardRef<NaverMapRef, NaverMapProps>(
     const scriptLoadedRef = useRef(false);
     // ✅ 상태 추가: 스크립트 로드 완료 여부를 상태로 관리
     const [isScriptLoaded, setIsScriptLoaded] = useState(false);
+    // 마커 인덱스 매핑 (contentId → marker index)
+    const markerIndexMapRef = useRef<Map<string, number>>(new Map());
+    // 원래 마커 아이콘 저장 (복원용)
+    const originalIconsRef = useRef<Map<string, any>>(new Map());
+    // 현재 강조된 마커의 contentId
+    const highlightedMarkerIdRef = useRef<string | null>(null);
 
     // 외부에서 사용할 수 있는 메서드 제공
     useImperativeHandle(ref, () => ({
@@ -155,6 +173,89 @@ const NaverMap = forwardRef<NaverMapRef, NaverMapProps>(
           lat: latitude,
           lng: longitude,
         } as { lat: number; lng: number });
+      },
+      highlightMarker: (contentId: string) => {
+        const markerIndex = markerIndexMapRef.current.get(contentId);
+        if (markerIndex === undefined || !markersRef.current[markerIndex]) {
+          return;
+        }
+
+        const marker = markersRef.current[markerIndex];
+        const tour = tours.find((t) => t.contentid === contentId);
+        if (!tour || !window.naver?.maps) return;
+
+        // 이미 강조된 마커면 무시
+        if (highlightedMarkerIdRef.current === contentId) {
+          return;
+        }
+
+        // 기존 강조 해제
+        if (highlightedMarkerIdRef.current) {
+          const prevIndex = markerIndexMapRef.current.get(
+            highlightedMarkerIdRef.current
+          );
+          if (prevIndex !== undefined && markersRef.current[prevIndex]) {
+            const originalIcon = originalIconsRef.current.get(
+              highlightedMarkerIdRef.current
+            );
+            if (originalIcon) {
+              markersRef.current[prevIndex].setIcon(originalIcon);
+            }
+          }
+        }
+
+        // 원래 아이콘 저장 (아직 저장되지 않은 경우)
+        if (!originalIconsRef.current.has(contentId)) {
+          // 일반 아이콘을 저장
+          const normalIcon = getMarkerIconByType(tour.contenttypeid);
+          const { maps } = window.naver;
+          const normalIconSize = new maps.Size(normalIcon.size.width, normalIcon.size.height);
+          const normalIconAnchor = new maps.Point(normalIcon.anchor.x, normalIcon.anchor.y);
+          originalIconsRef.current.set(contentId, {
+            content: normalIcon.content,
+            size: normalIconSize,
+            anchor: normalIconAnchor,
+          });
+        }
+
+        // 강조된 아이콘 생성 및 적용
+        const highlightedIcon = getHighlightedMarkerIconByType(tour.contenttypeid);
+        const { maps } = window.naver;
+        const highlightedIconSize = new maps.Size(
+          highlightedIcon.size.width,
+          highlightedIcon.size.height
+        );
+        const highlightedIconAnchor = new maps.Point(
+          highlightedIcon.anchor.x,
+          highlightedIcon.anchor.y
+        );
+
+        marker.setIcon({
+          content: highlightedIcon.content,
+          size: highlightedIconSize,
+          anchor: highlightedIconAnchor,
+        });
+
+        highlightedMarkerIdRef.current = contentId;
+      },
+      unhighlightMarker: () => {
+        if (!highlightedMarkerIdRef.current) return;
+
+        const contentId = highlightedMarkerIdRef.current;
+        const markerIndex = markerIndexMapRef.current.get(contentId);
+        if (markerIndex === undefined || !markersRef.current[markerIndex]) {
+          highlightedMarkerIdRef.current = null;
+          return;
+        }
+
+        const marker = markersRef.current[markerIndex];
+        const originalIcon = originalIconsRef.current.get(contentId);
+
+        if (originalIcon) {
+          marker.setIcon(originalIcon);
+        }
+
+        highlightedMarkerIdRef.current = null;
       },
     }));
 
@@ -256,6 +357,17 @@ const NaverMap = forwardRef<NaverMapRef, NaverMapProps>(
         });
 
         markersRef.current.push(marker);
+        // 마커 인덱스 매핑 저장
+        markerIndexMapRef.current.set(tour.contentid, markersRef.current.length - 1);
+        // 원래 아이콘 저장 (복원용)
+        const normalIcon = getMarkerIconByType(tour.contenttypeid);
+        const normalIconSize = new maps.Size(normalIcon.size.width, normalIcon.size.height);
+        const normalIconAnchor = new maps.Point(normalIcon.anchor.x, normalIcon.anchor.y);
+        originalIconsRef.current.set(tour.contentid, {
+          content: normalIcon.content,
+          size: normalIconSize,
+          anchor: normalIconAnchor,
+        });
 
         // 인포윈도우 컨텐츠 생성
         const address = tour.addr2
@@ -358,6 +470,10 @@ const NaverMap = forwardRef<NaverMapRef, NaverMapProps>(
             iw.close();
           }
         });
+        // 매핑 및 상태 초기화
+        markerIndexMapRef.current.clear();
+        originalIconsRef.current.clear();
+        highlightedMarkerIdRef.current = null;
       };
     }, [tours, isScriptLoaded]); // ✅ isScriptLoaded를 의존성 배열에 추가
 

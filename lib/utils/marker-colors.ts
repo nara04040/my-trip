@@ -174,3 +174,120 @@ export function getMarkerIconByType(contentTypeId: string) {
   });
 }
 
+/**
+ * 강조된 마커 아이콘 옵션 인터페이스
+ */
+export interface HighlightedMarkerIconOptions extends MarkerIconOptions {
+  /** 펄스 애니메이션 사용 여부 (기본값: true) */
+  usePulse?: boolean;
+}
+
+/**
+ * 강조된 네이버 지도용 HTML 마커 아이콘을 생성합니다.
+ *
+ * 일반 마커보다 크고 눈에 띄는 강조 효과를 가진 마커를 생성합니다.
+ * 크기 확대, 그림자 강화, 펄스 애니메이션 효과를 포함합니다.
+ *
+ * @param options 강조된 마커 아이콘 옵션
+ * @returns 네이버 지도 API icon 옵션 객체
+ *
+ * @example
+ * ```ts
+ * const icon = createHighlightedMarkerIcon({
+ *   color: "#3B82F6",
+ *   borderColor: "#1E40AF",
+ *   size: 32,
+ * });
+ * ```
+ */
+export function createHighlightedMarkerIcon(
+  options: HighlightedMarkerIconOptions
+) {
+  const {
+    color,
+    borderColor,
+    size = 32, // 기본값: 일반 마커(24px)보다 큰 32px
+    borderWidth = 3, // 기본값: 더 두꺼운 테두리
+    usePulse = true,
+  } = options;
+
+  // 펄스 애니메이션 CSS
+  const pulseAnimation = usePulse
+    ? `
+    @keyframes pulse {
+      0%, 100% {
+        transform: scale(1);
+        opacity: 1;
+      }
+      50% {
+        transform: scale(1.1);
+        opacity: 0.9;
+      }
+    }
+    animation: pulse 2s ease-in-out infinite;
+  `
+    : "";
+
+  // HTML 마커 생성 (강조 효과 포함)
+  const html = `
+    <div style="
+      width: ${size}px;
+      height: ${size}px;
+      background-color: ${color};
+      border: ${borderWidth}px solid ${borderColor};
+      border-radius: 50%;
+      box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3), 0 0 0 ${size * 0.3}px ${color}40;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease;
+      ${pulseAnimation}
+    ">
+      <div style="
+        width: ${size * 0.4}px;
+        height: ${size * 0.4}px;
+        background-color: white;
+        border-radius: 50%;
+        opacity: 0.9;
+      "></div>
+    </div>
+  `;
+
+  return {
+    content: html,
+    size: { width: size, height: size },
+    anchor: { x: size / 2, y: size / 2 },
+  };
+}
+
+/**
+ * 관광 타입 ID로 강조된 마커 아이콘을 생성합니다.
+ *
+ * 관광 타입에 맞는 색상으로 강조 효과가 적용된 마커 아이콘을 자동 생성합니다.
+ *
+ * @param contentTypeId 관광 타입 ID
+ * @returns 네이버 지도 API icon 옵션 객체
+ *
+ * @example
+ * ```ts
+ * const icon = getHighlightedMarkerIconByType("12"); // 관광지
+ * const marker = new naver.maps.Marker({
+ *   position: { lat: 37.5665, lng: 126.9780 },
+ *   map: map,
+ *   icon: icon,
+ * });
+ * ```
+ */
+export function getHighlightedMarkerIconByType(contentTypeId: string) {
+  const color = getMarkerColor(contentTypeId);
+  const borderColor = getMarkerBorderColor(contentTypeId);
+
+  return createHighlightedMarkerIcon({
+    color,
+    borderColor,
+    size: 32, // 강조된 마커는 32px
+    borderWidth: 3, // 더 두꺼운 테두리
+    usePulse: true, // 펄스 애니메이션 사용
+  });
+}
+
