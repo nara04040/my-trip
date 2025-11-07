@@ -11,8 +11,8 @@
  * 3. 타입별 분포 차트 (Donut Chart)
  *
  * 현재 상태:
- * - Phase 4.1: 페이지 기본 구조 완료
- * - Phase 4.2~4.7: 추후 구현 예정
+ * - Phase 4.1-4.5: 완료 (페이지 기본 구조, 타입 정의, 데이터 수집, 요약 카드, 지역별 차트)
+ * - Phase 4.6-4.7: 추후 구현 예정 (타입별 차트, 페이지 통합 및 최적화)
  *
  * @see {@link /docs/PRD.md} - 프로젝트 요구사항 문서 (2.6 통계 대시보드)
  * @see {@link /docs/TODO.md} - 작업 목록 (Phase 4)
@@ -23,7 +23,8 @@ import Link from "next/link";
 import { ArrowLeft, BarChart3 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { StatsSummary } from "@/components/stats/stats-summary";
-import { getStatsSummary } from "@/lib/api/stats-api";
+import { RegionChart } from "@/components/stats/region-chart";
+import { getStatsSummary, getRegionStats } from "@/lib/api/stats-api";
 
 /**
  * 메타데이터 설정
@@ -39,33 +40,57 @@ export const metadata = {
  * 데이터 캐싱 설정
  * 
  * 통계 데이터는 변동이 적으므로 1시간마다 재검증하도록 설정합니다.
- * Phase 4.7에서 실제 데이터 연동 시 활성화 예정
  */
 export const revalidate = 3600; // 1시간마다 재검증
 
 /**
  * 통계 대시보드 페이지 컴포넌트
  *
- * Phase 4.1-4.4 구현 완료:
+ * Phase 4.1-4.5 구현 완료:
  * - 페이지 기본 구조
  * - 타입 정의
  * - 통계 데이터 수집 함수
  * - 통계 요약 카드 컴포넌트
+ * - 지역별 분포 차트 (Bar Chart)
  *
  * 향후 구현:
- * - Phase 4.5: 지역별 분포 차트
  * - Phase 4.6: 타입별 분포 차트
  * - Phase 4.7: 페이지 통합 및 최적화
  */
 export default async function StatsPage() {
   // 통계 데이터 조회
   let statsSummary;
+  let regionStats;
   let error: Error | null = null;
 
   try {
-    statsSummary = await getStatsSummary();
+    // 병렬로 데이터 조회
+    const [summaryResult, regionResult] = await Promise.allSettled([
+      getStatsSummary(),
+      getRegionStats(),
+    ]);
+
+    if (summaryResult.status === "fulfilled") {
+      statsSummary = summaryResult.value;
+    } else {
+      console.error("Failed to fetch stats summary:", summaryResult.reason);
+    }
+
+    if (regionResult.status === "fulfilled") {
+      regionStats = regionResult.value;
+    } else {
+      console.error("Failed to fetch region stats:", regionResult.reason);
+    }
+
+    // 둘 다 실패한 경우에만 에러 처리
+    if (
+      summaryResult.status === "rejected" &&
+      regionResult.status === "rejected"
+    ) {
+      error = new Error("통계 데이터를 불러오는데 실패했습니다.");
+    }
   } catch (err) {
-    console.error("Failed to fetch stats summary:", err);
+    console.error("Failed to fetch stats:", err);
     error = err instanceof Error ? err : new Error("통계 데이터를 불러오는데 실패했습니다.");
   }
 
@@ -113,12 +138,24 @@ export default async function StatsPage() {
       {/* 섹션 구분선 */}
       <hr className="my-8 border-border" />
 
-      {/* 지역별 분포 차트 섹션 (Phase 4.5에서 구현 예정) */}
+      {/* 지역별 분포 차트 섹션 */}
       <section className="mb-12">
-        <h2 className="text-2xl font-semibold mb-4">지역별 관광지 분포</h2>
-        <div className="p-6 border rounded-lg bg-card min-h-[400px] flex items-center justify-center">
-          <p className="text-muted-foreground">지역별 분포 차트 (구현 예정)</p>
-        </div>
+        {error ? (
+          <div className="p-6 border rounded-lg bg-card">
+            <p className="text-red-500 mb-2">
+              지역별 통계 데이터를 불러오는데 실패했습니다.
+            </p>
+            <p className="text-sm text-muted-foreground">
+              {error.message}
+            </p>
+          </div>
+        ) : (
+          <RegionChart
+            regionStats={regionStats}
+            isLoading={!regionStats}
+            limit={10}
+          />
+        )}
       </section>
 
       {/* 섹션 구분선 */}

@@ -319,25 +319,25 @@
 
 ### 4.5 지역별 분포 차트 (Bar Chart)
 
-- [ ] shadcn/ui Chart 컴포넌트 설치
-  - [ ] `pnpx shadcn@latest add chart` 실행
-- [ ] `components/stats/region-chart.tsx` 지역별 분포 차트 컴포넌트 생성
-  - [ ] RegionStats[] 타입 props 받기
-  - [ ] recharts 기반 Bar Chart 구현
-    - [ ] X축: 지역명 (areaName)
-    - [ ] Y축: 관광지 개수 (count)
-    - [ ] 상위 10개 지역만 표시 (또는 전체)
-  - [ ] 바 클릭 핸들러 구현
-    - [ ] 클릭 시 해당 지역의 관광지 목록 페이지로 이동 (`/?areaCode={code}`)
-  - [ ] 호버 시 툴팁 표시 (지역명 + 정확한 개수)
-  - [ ] 다크/라이트 모드 지원 (shadcn 테마 활용)
-  - [ ] 반응형 디자인 (모바일/태블릿/데스크톱)
-  - [ ] 로딩 상태 처리
-  - [ ] 접근성
-    - [ ] ARIA 라벨 추가
-    - [ ] 키보드 네비게이션 지원
-    - [ ] 스크린 리더 지원
-  - [ ] 차트 제목 및 설명 추가
+- [x] shadcn/ui Chart 컴포넌트 설치
+  - [x] `pnpx shadcn@latest add chart` 실행
+- [x] `components/stats/region-chart.tsx` 지역별 분포 차트 컴포넌트 생성
+  - [x] RegionStats[] 타입 props 받기
+  - [x] recharts 기반 Bar Chart 구현
+    - [x] X축: 지역명 (areaName)
+    - [x] Y축: 관광지 개수 (count)
+    - [x] 상위 10개 지역만 표시 (또는 전체)
+  - [x] 바 클릭 핸들러 구현
+    - [x] 클릭 시 해당 지역의 관광지 목록 페이지로 이동 (`/?areaCode={code}`)
+  - [x] 호버 시 툴팁 표시 (지역명 + 정확한 개수)
+  - [x] 다크/라이트 모드 지원 (shadcn 테마 활용)
+  - [x] 반응형 디자인 (모바일/태블릿/데스크톱)
+  - [x] 로딩 상태 처리
+  - [x] 접근성
+    - [x] ARIA 라벨 추가
+    - [x] 키보드 네비게이션 지원
+    - [x] 스크린 리더 지원
+  - [x] 차트 제목 및 설명 추가
 
 ### 4.6 타입별 분포 차트 (Donut Chart)
 
