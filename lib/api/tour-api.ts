@@ -324,6 +324,17 @@ export async function getAreaBasedListWithPagination(
   const itemsArray = items && items.item ? normalizeItem(items.item) : [];
   const totalCount = response.response.body.totalCount || itemsArray.length;
 
+  // 좌표 디버깅: 첫 번째 항목의 좌표 로그
+  if (itemsArray.length > 0) {
+    console.log("🗺️ 첫 번째 관광지 좌표 데이터:", {
+      title: itemsArray[0].title,
+      mapx: itemsArray[0].mapx,
+      mapy: itemsArray[0].mapy,
+      mapx_type: typeof itemsArray[0].mapx,
+      mapy_type: typeof itemsArray[0].mapy,
+    });
+  }
+
   return { items: itemsArray, totalCount };
 }
 

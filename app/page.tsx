@@ -9,14 +9,19 @@
  * - 지역 필터 (시/도 단위, URL 파라미터: areaCode)
  * - 관광 타입 필터 (URL 파라미터: contentTypeId)
  *
+ * 레이아웃:
+ * - 데스크톱 (lg 이상): 리스트(좌측 50%) | 지도(우측 50%) 동시 표시
+ * - 모바일 (lg 미만): 탭으로 리스트/지도 전환
+ *
  * @see {@link /docs/PRD.md} - 프로젝트 요구사항 문서
  * @see {@link /docs/TODO.md} - 작업 목록
+ * @see {@link /docs/reference/design/DESIGN.md} - 디자인 가이드
  */
 
 import { Suspense } from "react";
-import { TourList } from "@/components/tour-list";
 import { TourFilters } from "@/components/tour-filters";
 import { TourPagination } from "@/components/tour-pagination";
+import { HomeTourView } from "@/components/home-tour-view";
 import {
   getAreaBasedListWithPagination,
   getAreaCodes,
@@ -143,10 +148,16 @@ export default async function Home({ searchParams }: HomeProps) {
         </Suspense>
       </div>
 
-      {/* 관광지 목록 컴포넌트 */}
-      <TourList tours={tours} error={error} emptyMessage={emptyMessage} />
+      {/* 관광지 목록 및 지도 뷰 (리스트-지도 연동 포함) */}
+      <div className="mb-6">
+        <HomeTourView
+          tours={tours}
+          error={error}
+          emptyMessage={emptyMessage}
+        />
+      </div>
 
-      {/* 페이지네이션 컴포넌트 */}
+      {/* 페이지네이션 컴포넌트 (리스트 탭일 때만 표시) */}
       {!error && tours.length > 0 && (
         <Suspense fallback={<div className="h-16 animate-pulse bg-muted rounded-lg mt-6" />}>
           <TourPagination

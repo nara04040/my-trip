@@ -12,6 +12,8 @@
  * @see {@link /docs/reference/design/DESIGN.md} - 디자인 가이드
  */
 
+"use client";
+
 import { SignedOut, SignInButton, SignedIn, UserButton } from "@clerk/nextjs";
 import Link from "next/link";
 import React, { Suspense } from "react";
